@@ -4,11 +4,12 @@ using Dalamud.Plugin;
 using System.IO;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
+using ECommons;
 using SavageAim.Windows;
 
 namespace SavageAim;
 
-public sealed class Plugin : IDalamudPlugin
+public sealed class SavageAim : IDalamudPlugin
 {
     private const string CommandName = "/sa";
 
@@ -20,7 +21,7 @@ public sealed class Plugin : IDalamudPlugin
     private ConfigWindow ConfigWindow { get; init; }
     private SavageAimWindow MainWindow { get; init; }
 
-    public Plugin(
+    public SavageAim(
         [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
         [RequiredVersion("1.0")] ICommandManager commandManager,
         [RequiredVersion("1.0")] ITextureProvider textureProvider)
@@ -50,6 +51,9 @@ public sealed class Plugin : IDalamudPlugin
 
         // Adds another button that is doing the same but for the main ui of the plugin
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
+
+        // Add ECommons
+        ECommonsMain.Init(pluginInterface, this);
     }
 
     public void Dispose()
@@ -60,6 +64,7 @@ public sealed class Plugin : IDalamudPlugin
         MainWindow.Dispose();
 
         CommandManager.RemoveHandler(CommandName);
+        ECommonsMain.Dispose();
     }
 
     private void OnCommand(string command, string args)

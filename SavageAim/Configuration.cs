@@ -14,15 +14,15 @@ public class Configuration : IPluginConfiguration
 
     // the below exist just to make saving less cumbersome
     [NonSerialized]
-    private DalamudPluginInterface? PluginInterface;
+    private DalamudPluginInterface? pluginInterface;
 
     public void Initialize(DalamudPluginInterface pluginInterface)
     {
-        PluginInterface = pluginInterface;
+        this.pluginInterface = pluginInterface;
     }
 
     public void Save()
     {
-        PluginInterface!.SavePluginConfig(this);
+        this.pluginInterface!.SavePluginConfig(this);
     }
 }
