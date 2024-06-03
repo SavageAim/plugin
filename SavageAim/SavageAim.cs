@@ -18,7 +18,6 @@ public sealed class SavageAim : IDalamudPlugin
     public Configuration Configuration { get; init; }
 
     public readonly WindowSystem WindowSystem = new("SavageAimPlugin");
-    private ConfigWindow ConfigWindow { get; init; }
     private SavageAimWindow MainWindow { get; init; }
 
     public SavageAim(
@@ -32,10 +31,7 @@ public sealed class SavageAim : IDalamudPlugin
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Configuration.Initialize(PluginInterface);
 
-        ConfigWindow = new ConfigWindow(this);
         MainWindow = new SavageAimWindow(this);
-
-        WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
@@ -57,7 +53,6 @@ public sealed class SavageAim : IDalamudPlugin
     {
         WindowSystem.RemoveAllWindows();
 
-        ConfigWindow.Dispose();
         MainWindow.Dispose();
 
         CommandManager.RemoveHandler(CommandName);

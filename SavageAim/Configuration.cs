@@ -9,7 +9,7 @@ public class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 0;
 
-    public string apiKey { get; set; } = "abc";
+    public string apiKey { get; set; } = "";
 
     // the below exist just to make saving less cumbersome
     [NonSerialized]
