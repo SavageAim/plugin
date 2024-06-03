@@ -25,18 +25,12 @@ public class SavageAimWindow : Window, IDisposable
         this.plugin = plugin;
     }
 
-    public unsafe uint NameId()
-    {
-        return Player.Character->NameID;
-    }
-
     public void Dispose() { }
 
     public override void Draw()
     {
         var data = CharacterData.Instance();
-        ImGui.Text(data.ToString());
-        ImGui.Text($"ID: {this.NameId()}");
+        data.Draw();
 
         /*
         if (ImGui.Button("Show Settings"))

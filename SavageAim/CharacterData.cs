@@ -3,6 +3,7 @@ using System.Text;
 using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using ImGuiNET;
 
 namespace SavageAim;
 public struct CharacterData
@@ -26,8 +27,8 @@ public struct CharacterData
     private static unsafe String GetGearName(GearSlots slot)
     {
         InventoryManager* manager = InventoryManager.Instance();
-        InventoryItem* chest = manager->GetInventorySlot(InventoryType.EquippedItems, (int) slot);
-        return ExcelItemHelper.GetName(chest->GetItemId());
+        InventoryItem* item = manager->GetInventorySlot(InventoryType.EquippedItems, (int) slot);
+        return ExcelItemHelper.GetName(item->ItemID).Split(" ")[0];
     }
 
     public static unsafe CharacterData Instance()
@@ -72,5 +73,80 @@ public struct CharacterData
         builder.AppendLine($"Right Ring: {this.currentRightRing}");
         builder.AppendLine($"Left Ring: {this.currentLeftRing}");
         return builder.ToString();
+    }
+
+    public void Draw()
+    {
+        ImGui.BeginTable($"currGear-{this.job}", 4, ImGuiTableFlags.BordersH | ImGuiTableFlags.BordersV);
+        // Mainhand | Offhand (if required)
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.Text("Mainhand");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentMainhand);
+        if (this.job == "PLD")
+        {
+            ImGui.TableNextColumn();
+            ImGui.Text("Offhand");
+            ImGui.TableNextColumn();
+            ImGui.Text(this.currentOffhand);
+        }
+
+        // Head | Earrings
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.Text("Head");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentHead);
+        ImGui.TableNextColumn();
+        ImGui.Text("Earrings");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentEarrings);
+
+        // Body | Necklace
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.Text("Body");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentBody);
+        ImGui.TableNextColumn();
+        ImGui.Text("Necklace");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentNecklace);
+
+        // Hands | Bracelet
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.Text("Hands");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentHands);
+        ImGui.TableNextColumn();
+        ImGui.Text("Bracelet");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentBracelet);
+
+        // Legs | Right Ring
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.Text("Legs");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentLegs);
+        ImGui.TableNextColumn();
+        ImGui.Text("Right Ring");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentRightRing);
+
+        // Feet | Left Ring
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.Text("Feet");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentFeet);
+        ImGui.TableNextColumn();
+        ImGui.Text("Left Ring");
+        ImGui.TableNextColumn();
+        ImGui.Text(this.currentLeftRing);
+
+        ImGui.EndTable();
     }
 }
