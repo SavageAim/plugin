@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
@@ -11,8 +12,9 @@ namespace SavageAim.Windows;
 
 public class SavageAimWindow : Window, IDisposable
 {
-    private SavageAim plugin;
+    private List<SACharacter> charList = new();
     private List<Gear> gearList = new();
+    private SavageAim plugin;
 
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
@@ -27,17 +29,20 @@ public class SavageAimWindow : Window, IDisposable
         };
 
         this.plugin = plugin;
-        this.GetGearData();
+        this.LoadData();
     }
 
     public void Dispose() { }
 
-    private void GetGearData()
+    private void LoadData()
     {
-        PluginLog.Information("Fetching Gear Data");
         var gearTask = SavageAimClient.GetGear(this.plugin.Configuration.apiKey);
         gearTask.Wait();
         this.gearList = gearTask.Result;
+
+        var charTask = SavageAimClient.GetCharacters(this.plugin.Configuration.apiKey);
+        charTask.Wait();
+        this.charList = charTask.Result;
     }
 
     private void DrawCurrentGearTab()
@@ -48,10 +53,29 @@ public class SavageAimWindow : Window, IDisposable
 
     private void DrawBisListsTab()
     {
-        foreach (var gear in this.gearList)
+        var inGameChar = InGameCharacterData.Instance();
+        // If the current Character isn't in the list, display an error message
+        // Take only the first word of the world from SA since SA world contains DC as well
+        var saChar = this.charList.Find(sa => sa.Name == inGameChar.name && sa.World.Split(" ")[0] == inGameChar.world);
+        if (saChar == null)
         {
-            ImGui.Text($"{gear.ID}: {gear.Name} ({gear.ItemLevel})");
+            ImGui.Text("Your Current Character was not found in your Savage Aim Account.");
+            ImGui.Text("Visit https://savageaim.com/characters/new/ to add a new one!");
+            return;
         }
+
+        // Draw a List Box down the side, and selecting one displays the stuff on the right
+        // TODO - Change from tabs to above idea
+        ImGui.BeginTabBar("bisListTabs");
+        foreach (var bis in saChar.BISSummaries)
+        {
+            if (ImGui.BeginTabItem(bis.Name))
+            {
+                ImGui.Text($"{bis.ID} - {bis.Name}");
+                ImGui.EndTabItem();
+            }
+        }
+        ImGui.EndTabBar();
     }
 
     private void DrawSettingsTab()
