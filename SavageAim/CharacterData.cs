@@ -4,6 +4,7 @@ using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 
 namespace SavageAim;
 public struct CharacterData
@@ -28,7 +29,10 @@ public struct CharacterData
     {
         InventoryManager* manager = InventoryManager.Instance();
         InventoryItem* item = manager->GetInventorySlot(InventoryType.EquippedItems, (int) slot);
-        return ExcelItemHelper.GetName(item->ItemID).Split(" ")[0];
+        Item i = ExcelItemHelper.Get(item->ItemID);
+        var itemLevel = i.LevelItem.Value.RowId;
+        String name = ExcelItemHelper.GetName(i).Split(" ")[0];
+        return $"{name} ({itemLevel})";
     }
 
     public static unsafe CharacterData Instance()
