@@ -36,7 +36,7 @@ public sealed class SavageAim : IDalamudPlugin
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Check your BIS Lists on SavageAim in game, and sync your current gear to lists of your choice!"
+            HelpMessage = "Check your BIS Lists from SavageAim in game, and sync your current gear to lists of your choice!"
         });
 
         PluginInterface.UiBuilder.Draw += DrawUI;

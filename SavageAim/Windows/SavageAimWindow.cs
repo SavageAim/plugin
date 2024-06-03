@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Interface.Windowing;
-using ECommons.Configuration;
-using ECommons.GameHelpers;
+using Dalamud.Logging;
 using ImGuiNET;
+using SavageAimPlugin;
 using SavageAimPlugin.Data;
 
 namespace SavageAim.Windows;
@@ -11,6 +12,7 @@ namespace SavageAim.Windows;
 public class SavageAimWindow : Window, IDisposable
 {
     private SavageAim plugin;
+    private List<Gear> gearList = new();
 
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
@@ -25,9 +27,18 @@ public class SavageAimWindow : Window, IDisposable
         };
 
         this.plugin = plugin;
+        this.GetGearData();
     }
 
     public void Dispose() { }
+
+    private void GetGearData()
+    {
+        PluginLog.Information("Fetching Gear Data");
+        var gearTask = SavageAimClient.GetGear(this.plugin.Configuration.apiKey);
+        gearTask.Wait();
+        this.gearList = gearTask.Result;
+    }
 
     private void DrawCurrentGearTab()
     {
@@ -37,7 +48,10 @@ public class SavageAimWindow : Window, IDisposable
 
     private void DrawBisListsTab()
     {
-        ImGui.Text("BIS LISTS :D");
+        foreach (var gear in this.gearList)
+        {
+            ImGui.Text($"{gear.ID}: {gear.Name} ({gear.ItemLevel})");
+        }
     }
 
     private void DrawSettingsTab()
