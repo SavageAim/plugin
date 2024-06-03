@@ -40,16 +40,13 @@ public sealed class SavageAim : IDalamudPlugin
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Interact with SavageAim from in game!"
+            HelpMessage = "Check your BIS Lists on SavageAim in game, and sync your current gear to lists of your choice!"
         });
 
         PluginInterface.UiBuilder.Draw += DrawUI;
 
         // This adds a button to the plugin installer entry of this plugin which allows
-        // to toggle the display status of the configuration ui
-        PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
-
-        // Adds another button that is doing the same but for the main ui of the plugin
+        // to toggle the display status of the main ui of the plugin
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
 
         // Add ECommons
@@ -74,7 +71,5 @@ public sealed class SavageAim : IDalamudPlugin
     }
 
     private void DrawUI() => WindowSystem.Draw();
-
-    public void ToggleConfigUI() => ConfigWindow.Toggle();
     public void ToggleMainUI() => MainWindow.Toggle();
 }

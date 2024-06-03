@@ -1,59 +1,37 @@
 using System;
 using System.Numerics;
 using Dalamud.Interface.Windowing;
+using Dalamud.Logging;
 using ImGuiNET;
 
 namespace SavageAim.Windows;
 
 public class ConfigWindow : Window, IDisposable
 {
-    private Configuration Configuration;
+    private Configuration config;
 
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
     // and the window ID will always be "###XYZ counter window" for ImGui
-    public ConfigWindow(SavageAim plugin) : base("A Wonderful Configuration Window###With a constant ID")
+    public ConfigWindow(SavageAim plugin) : base("Savage Aim - Settings")
     {
-        Flags = ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar |
+        Flags = ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar |
                 ImGuiWindowFlags.NoScrollWithMouse;
 
-        Size = new Vector2(232, 75);
-        SizeCondition = ImGuiCond.Always;
-
-        Configuration = plugin.Configuration;
+        config = plugin.Configuration;
     }
 
     public void Dispose() { }
 
-    public override void PreDraw()
-    {
-        // Flags must be added or removed before Draw() is being called, or they won't apply
-        if (Configuration.IsConfigWindowMovable)
-        {
-            Flags &= ~ImGuiWindowFlags.NoMove;
-        }
-        else
-        {
-            Flags |= ImGuiWindowFlags.NoMove;
-        }
-    }
-
     public override void Draw()
     {
-        // can't ref a property, so use a local copy
-        var configValue = Configuration.SomePropertyToBeSavedAndWithADefault;
-        if (ImGui.Checkbox("Random Config Bool", ref configValue))
+        String apiKey = config.apiKey;
+        if (ImGui.InputText("API Key", ref apiKey, 128))
         {
-            Configuration.SomePropertyToBeSavedAndWithADefault = configValue;
-            // can save immediately on change, if you don't want to provide a "Save and Close" button
-            Configuration.Save();
+            PluginLog.Information($"Saving API Key: {apiKey}");
+            config.apiKey = apiKey;
+            this.config.Save();
         }
-
-        var movable = Configuration.IsConfigWindowMovable;
-        if (ImGui.Checkbox("Movable Config Window", ref movable))
-        {
-            Configuration.IsConfigWindowMovable = movable;
-            Configuration.Save();
-        }
+        ImGui.Text("Visit https://savageaim.com/settings to get your API key.");
     }
 }
