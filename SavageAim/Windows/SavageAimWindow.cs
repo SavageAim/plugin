@@ -291,21 +291,28 @@ public class SavageAimWindow : Window, IDisposable
 
         if (ImGui.BeginTabItem("BIS Lists"))
         {
-            if (!this.apiKeyValid)
+            if (this.apiKeyTested)
             {
-                ImGui.Text("Please update the Settings Tab with a valid Savage Aim API Key!");
-            }
-            else if (!this.saDataLoaded)
-            {
-                if (!this.saDataLoading)
+                if (!this.apiKeyValid)
                 {
-                    this.LoadData();
+                    ImGui.Text("Please update the Settings Tab with a valid Savage Aim API Key!");
                 }
-                ImGui.Text("Loading Data from Savage Aim! Please wait!");
+                else if (!this.saDataLoaded)
+                {
+                    if (!this.saDataLoading)
+                    {
+                        this.LoadData();
+                    }
+                    ImGui.Text("Loading, please wait...");
+                }
+                else
+                {
+                    this.DrawBisListsTab();
+                }
             }
             else
             {
-                this.DrawBisListsTab();
+                ImGui.Text("Loading, please wait...");
             }
             ImGui.EndTabItem();
         }
