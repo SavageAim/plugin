@@ -10,16 +10,16 @@ using SavageAimPlugin.Data;
 
 namespace SavageAim.Windows;
 
-const GREEN = new Vector4(82, 149, 128, 1);
-const RED = new Vector4(237,18, 62, 1);
-
-
 public class SavageAimWindow : Window, IDisposable
 {
-    private List<BISList> bisLists = new();
+    private BISList[] bisLists = [];
     private List<Gear> gearList = new();
     private SavageAim plugin;
     private SACharacter? saChar = null;
+    private bool loaded = false;
+
+    private Vector4 GREEN = new Vector4(82, 149, 128, 1);
+    private Vector4 RED = new Vector4(237, 18, 62, 1);
 
     // API Key Test Stuff
     private bool apiKeyTested = false;
@@ -38,7 +38,6 @@ public class SavageAimWindow : Window, IDisposable
         };
 
         this.plugin = plugin;
-        this.LoadData();
     }
 
     public void Dispose() { }
@@ -52,9 +51,14 @@ public class SavageAimWindow : Window, IDisposable
         var charTask = SavageAimClient.GetCharacters(this.plugin.Configuration.apiKey);
         charTask.Wait();
         var charList = charTask.Result;
-        var data = InGameCharacterData.Instance();
         // Find the Character from SA that matches the inGame data
-        this.saChar = this.charList.Find(sa => sa.Name == inGameChar.name && sa.World.Split(" ")[0] == inGameChar.world);
+        var data = InGameCharacterData.Instance();
+        this.saChar = charList.Find(sa => sa.Name == data.name && sa.World.Split(" ")[0] == data.world);
+
+        if (this.saChar == null)
+        {
+            return;
+        }
 
         // Load the BIS Lists for the Character
         var bisTask = SavageAimClient.GetBisLists(this.plugin.Configuration.apiKey, this.saChar.ID);
@@ -70,7 +74,6 @@ public class SavageAimWindow : Window, IDisposable
 
     private void DrawBisListsTab()
     {
-        var inGameChar = InGameCharacterData.Instance();
         // If the current Character isn't in the list, display an error message
         // Take only the first word of the world from SA since SA world contains DC as well
         if (this.saChar == null)
@@ -85,14 +88,140 @@ public class SavageAimWindow : Window, IDisposable
         ImGui.BeginTabBar("bisListTabs", ImGuiTabBarFlags.NoCloseWithMiddleMouseButton | ImGuiTabBarFlags.FittingPolicyScroll);
         foreach (var bis in this.bisLists)
         {
-            var header = $"{bis.Name} ({bis.Job.Name})"
+            var header = $"{bis.DisplayName} ({bis.Job.ID})";
             if (ImGui.BeginTabItem(header))
             {
-                bis.Draw();
+                this.DrawBisListDetails(bis);
                 ImGui.EndTabItem();
             }
         }
         ImGui.EndTabBar();
+    }
+
+    private void DrawBisListDetails(BISList bis)
+    {
+        ImGui.BeginTable($"bisTable-{bis.ID}", 3, ImGuiTableFlags.BordersH | ImGuiTableFlags.BordersV);
+        // Headers Row
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Slot");
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("BIS");
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Current");
+
+        // Mainhand
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Mainhand");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisMainhand.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentMainhand.Name);
+
+        // Offhand
+        if (bis.Job.ID == "PLD")
+        {
+            ImGui.TableNextRow();
+            ImGui.TableNextColumn();
+            ImGui.TableHeader("Offhand");
+            ImGui.TableNextColumn();
+            ImGui.Text(bis.BisOffhand.Name);
+            ImGui.TableNextColumn();
+            ImGui.Text(bis.CurrentOffhand.Name);
+        }
+
+        // Head
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Head");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisHead.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentHead.Name);
+
+        // Body
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Body");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisBody.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentBody.Name);
+
+        // Hands
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Hands");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisHands.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentHands.Name);
+
+        // Legs
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Legs");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisLegs.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentLegs.Name);
+
+        // Feet
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Feet");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisFeet.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentFeet.Name);
+
+        // Earrings
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Earrings");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisEarrings.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentEarrings.Name);
+
+        // Necklace
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Necklace");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisNecklace.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentNecklace.Name);
+
+        // Bracelet
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Bracelet");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisBracelet.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentBracelet.Name);
+
+        // Right Ring
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Right Ring");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisRightRing.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentRightRing.Name);
+
+        // Left Ring
+        ImGui.TableNextRow();
+        ImGui.TableNextColumn();
+        ImGui.TableHeader("Left Ring");
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.BisLeftRing.Name);
+        ImGui.TableNextColumn();
+        ImGui.Text(bis.CurrentLeftRing.Name);
+
+        ImGui.EndTable();
     }
 
     private void DrawSettingsTab()
@@ -134,6 +263,12 @@ public class SavageAimWindow : Window, IDisposable
 
     public override void Draw()
     {
+        if (!this.loaded)
+        {
+            this.LoadData();
+            this.loaded = true;
+        }
+
         ImGui.BeginTabBar("saMainMenu", ImGuiTabBarFlags.NoCloseWithMiddleMouseButton);
         if (ImGui.BeginTabItem("Current Gear"))
         {

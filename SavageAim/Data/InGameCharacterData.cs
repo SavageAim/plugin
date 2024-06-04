@@ -101,15 +101,13 @@ public struct InGameCharacterData
         // Mainhand | Offhand (if required)
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Mainhand");
+        ImGui.TableHeader("Mainhand");
         ImGui.TableNextColumn();
         ImGui.Text(mainhand);
         if (job == Job.PLD)
         {
             ImGui.TableNextColumn();
-            ImGui.TableHeader();
-            ImGui.Text("Offhand");
+            ImGui.TableHeader("Offhand");
             ImGui.TableNextColumn();
             ImGui.Text(offhand);
         }
@@ -117,65 +115,55 @@ public struct InGameCharacterData
         // Head | Earrings
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Head");
+        ImGui.TableHeader("Head");
         ImGui.TableNextColumn();
         ImGui.Text(head);
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Earrings");
+        ImGui.TableHeader("Earrings");
         ImGui.TableNextColumn();
         ImGui.Text(earrings);
 
         // Body | Necklace
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Body");
+        ImGui.TableHeader("Body");
         ImGui.TableNextColumn();
         ImGui.Text(body);
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Necklace");
+        ImGui.TableHeader("Necklace");
         ImGui.TableNextColumn();
         ImGui.Text(necklace);
 
         // Hands | Bracelet
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Hands");
+        ImGui.TableHeader("Hands");
         ImGui.TableNextColumn();
         ImGui.Text(hands);
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Bracelet");
+        ImGui.TableHeader("Bracelet");
         ImGui.TableNextColumn();
         ImGui.Text(bracelet);
 
         // Legs | Right Ring
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Legs");
+        ImGui.TableHeader("Legs");
         ImGui.TableNextColumn();
         ImGui.Text(legs);
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Right Ring");
+        ImGui.TableHeader("Right Ring");
         ImGui.TableNextColumn();
         ImGui.Text(rightRing);
 
         // Feet | Left Ring
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Feet");
+        ImGui.TableHeader("Feet");
         ImGui.TableNextColumn();
         ImGui.Text(feet);
         ImGui.TableNextColumn();
-        ImGui.TableHeader();
-        ImGui.Text("Left Ring");
+        ImGui.TableHeader("Left Ring");
         ImGui.TableNextColumn();
         ImGui.Text(leftRing);
 

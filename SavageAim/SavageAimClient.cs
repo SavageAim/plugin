@@ -20,21 +20,21 @@ public class SavageAimClient
         return client;
     }
 
-    public static async Task<List<BISList>> GetBisLists(String apiKey, uint charId)
+    public static async Task<BISList[]> GetBisLists(String apiKey, uint charId)
     {
         try
         {
             using HttpClient client = GetClient(apiKey);
-            var response = await client.GetAsync($"https://savageaim.com/backend/api/character/{charId}/bis_lists/");
+            var response = await client.GetAsync($"https://savageaim.com/backend/api/character/{charId}/");
             response.EnsureSuccessStatusCode();
-            var bisListList = await JsonSerializer.DeserializeAsync<List<BISList>>(response.Content.ReadAsStream());
-            return bisListList ?? new();
+            var characterDetails = await JsonSerializer.DeserializeAsync<SACharacterDetails>(response.Content.ReadAsStream());
+            return characterDetails.BISLists ?? [];
         }
         catch (HttpRequestException ex)
         {
-            PluginLog.Error("Error Occurred when fetching BIS Lists", ex.Message);
+            PluginLog.Error($"Error Occurred when fetching BIS Lists: {ex.Message}");
         }
-        return new();
+        return [];
     }
 
     public static async Task<List<SACharacter>> GetCharacters(String apiKey)

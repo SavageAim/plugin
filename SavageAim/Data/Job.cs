@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 
-namespace SavageAim.Data;
+namespace SavageAimPlugin.Data;
 
 public record class SAJob (
-    [property: JsonPropertyName("id")] string ID,
+    [property: JsonPropertyName("id")] string ID
 );

@@ -9,3 +9,7 @@ public record class SACharacter(
     [property: JsonPropertyName("name")] string Name,
     [property: JsonPropertyName("world")] string World
 );
+
+public record class SACharacterDetails(
+    [property: JsonPropertyName("bis_lists")] BISList[] BISLists
+);
