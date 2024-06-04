@@ -74,6 +74,7 @@ public class SavageAimWindow : Window, IDisposable
 
     private void DrawBisListsTab()
     {
+        var data = InGameCharacterData.Instance();
         // If the current Character isn't in the list, display an error message
         // Take only the first word of the world from SA since SA world contains DC as well
         if (this.saChar == null)
@@ -92,6 +93,12 @@ public class SavageAimWindow : Window, IDisposable
             if (ImGui.BeginTabItem(header))
             {
                 this.DrawBisListDetails(bis);
+                ImGui.Button("Reload Data");
+                if (data.job.ToString() == bis.Job.ID)
+                {
+                    ImGui.SameLine();
+                    ImGui.Button("Save Current Gear");
+                }
                 ImGui.EndTabItem();
             }
         }
