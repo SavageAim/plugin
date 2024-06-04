@@ -13,6 +13,25 @@ namespace SavageAimPlugin;
 
 public class SavageAimClient
 {
+    public static async Task<List<BISList>> GetBisLists(String apiKey, uint charId)
+    {
+        try
+        {
+            using HttpClient client = new HttpClient();
+            // TODO - Replace with a proper API Key impl when it exists
+            client.DefaultRequestHeaders.Add("Cookie", $"sessionid={apiKey}");
+            var response = await client.GetAsync($"https://savageaim.com/backend/api/character/{charId}/bis_lists/");
+            response.EnsureSuccessStatusCode();
+            var bisListList = await JsonSerializer.DeserializeAsync<List<BISList>>(response.Content.ReadAsStream());
+            return bisListList ?? new();
+        }
+        catch (HttpRequestException ex)
+        {
+            PluginLog.Error("Error Occurred when fetching BIS Lists", ex.Message);
+        }
+        return new();
+    }
+
     public static async Task<List<SACharacter>> GetCharacters(String apiKey)
     {
         try
@@ -27,7 +46,7 @@ public class SavageAimClient
         }
         catch (HttpRequestException ex)
         {
-            PluginLog.Error("Error Occurred when fetching Gear", ex.Message);
+            PluginLog.Error("Error Occurred when fetching Characters", ex.Message);
         }
         return new();
     }
@@ -49,5 +68,23 @@ public class SavageAimClient
             PluginLog.Error("Error Occurred when fetching Gear", ex.Message);
         }
         return new();
+    }
+
+    public static async Task<bool> TestApiKey(String apiKey)
+    {
+        try
+        {
+            using HttpClient client = new HttpClient();
+            // TODO - Replace with a proper API Key impl when it exists
+            client.DefaultRequestHeaders.Add("Cookie", $"sessionid={apiKey}");
+            var response = await client.GetAsync("https://savageaim.com/backend/api/me/");
+            response.EnsureSuccessStatusCode();
+            return true;
+        }
+        catch (HttpRequestException ex)
+        {
+            PluginLog.Error("Error Occurred when testing API Key", ex.Message);
+        }
+        return false;
     }
 }
