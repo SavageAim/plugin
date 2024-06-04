@@ -16,7 +16,8 @@ public class SavageAimWindow : Window, IDisposable
     private List<Gear> gearList = new();
     private SavageAim plugin;
     private SACharacter? saChar = null;
-    private bool loaded = false;
+    private bool saDataLoaded = false;
+    private bool saDataLoading = false;
 
     private Vector4 GREEN = new Vector4(82, 149, 128, 1);
     private Vector4 RED = new Vector4(237, 18, 62, 1);
@@ -42,8 +43,9 @@ public class SavageAimWindow : Window, IDisposable
 
     public void Dispose() { }
 
-    private void LoadData()
+    private async void LoadData()
     {
+        this.saDataLoading = true;
         var gearTask = SavageAimClient.GetGear(this.plugin.Configuration.apiKey);
         gearTask.Wait();
         this.gearList = gearTask.Result;
@@ -64,6 +66,10 @@ public class SavageAimWindow : Window, IDisposable
         var bisTask = SavageAimClient.GetBisLists(this.plugin.Configuration.apiKey, this.saChar.ID);
         bisTask.Wait();
         this.bisLists = bisTask.Result;
+
+        // Mark data as loaded for first run
+        this.saDataLoaded = true;
+        this.saDataLoading = false;
     }
 
     private void DrawCurrentGearTab()
@@ -236,17 +242,14 @@ public class SavageAimWindow : Window, IDisposable
         String apiKey = this.plugin.Configuration.apiKey;
         if (ImGui.InputText("API Key", ref apiKey, 128))
         {
-            // Test the API Key before saving it (move the Save back to a button).
+            // Test the API Key before saving it.
             this.plugin.Configuration.apiKey = apiKey;
+            this.apiKeyTested = false;
         }
         ImGui.Text("Visit https://savageaim.com/settings to get your API key.");
         if (ImGui.Button("Test and Save"))
         {
-            this.apiKeyTested = false;
-            var testTask = SavageAimClient.TestApiKey(this.plugin.Configuration.apiKey);
-            testTask.Wait();
-            this.apiKeyTested = true;
-            this.apiKeyValid = testTask.Result;
+            this.TestApiKey();
             if (this.apiKeyValid)
             {
                 this.plugin.Configuration.Save();
@@ -268,14 +271,16 @@ public class SavageAimWindow : Window, IDisposable
         }
     }
 
+    public override void PostDraw()
+    {
+        if (!this.apiKeyTested)
+        {
+            this.TestApiKey();
+        }
+    }
+
     public override void Draw()
     {
-        if (!this.loaded)
-        {
-            this.LoadData();
-            this.loaded = true;
-        }
-
         ImGui.BeginTabBar("saMainMenu", ImGuiTabBarFlags.NoCloseWithMiddleMouseButton);
         if (ImGui.BeginTabItem("Current Gear"))
         {
@@ -286,7 +291,22 @@ public class SavageAimWindow : Window, IDisposable
 
         if (ImGui.BeginTabItem("BIS Lists"))
         {
-            this.DrawBisListsTab();
+            if (!this.apiKeyValid)
+            {
+                ImGui.Text("Please update the Settings Tab with a valid Savage Aim API Key!");
+            }
+            else if (!this.saDataLoaded)
+            {
+                if (!this.saDataLoading)
+                {
+                    this.LoadData();
+                }
+                ImGui.Text("Loading Data from Savage Aim! Please wait!");
+            }
+            else
+            {
+                this.DrawBisListsTab();
+            }
             ImGui.EndTabItem();
         }
 
@@ -296,5 +316,13 @@ public class SavageAimWindow : Window, IDisposable
             ImGui.EndTabItem();
         }
         ImGui.EndTabBar();
+    }
+
+    private void TestApiKey()
+    {
+        var testTask = SavageAimClient.TestApiKey(this.plugin.Configuration.apiKey);
+        testTask.Wait();
+        this.apiKeyTested = true;
+        this.apiKeyValid = testTask.Result;
     }
 }
