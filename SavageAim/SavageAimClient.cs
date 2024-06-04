@@ -72,6 +72,7 @@ public class SavageAimClient
 
     public static async Task<bool> TestApiKey(String apiKey)
     {
+        PluginLog.Information($"Testing API Key: {apiKey}");
         try
         {
             using HttpClient client = new HttpClient();
