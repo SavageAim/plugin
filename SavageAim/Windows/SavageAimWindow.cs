@@ -10,12 +10,20 @@ using SavageAimPlugin.Data;
 
 namespace SavageAim.Windows;
 
+const GREEN = new Vector4(82, 149, 128, 1);
+const RED = new Vector4(237,18, 62, 1);
+
+
 public class SavageAimWindow : Window, IDisposable
 {
     private List<BISList> bisLists = new();
     private List<Gear> gearList = new();
     private SavageAim plugin;
     private SACharacter? saChar = null;
+
+    // API Key Test Stuff
+    private bool apiKeyTested = false;
+    private bool apiKeyValid = false;
 
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
@@ -92,11 +100,36 @@ public class SavageAimWindow : Window, IDisposable
         String apiKey = this.plugin.Configuration.apiKey;
         if (ImGui.InputText("API Key", ref apiKey, 128))
         {
-            // Test the API Key before saving it.
+            // Test the API Key before saving it (move the Save back to a button).
             this.plugin.Configuration.apiKey = apiKey;
-            this.plugin.Configuration.Save();
         }
         ImGui.Text("Visit https://savageaim.com/settings to get your API key.");
+        if (ImGui.Button("Test and Save"))
+        {
+            this.apiKeyTested = false;
+            var testTask = SavageAimClient.TestApiKey(this.plugin.Configuration.apiKey);
+            testTask.Wait();
+            this.apiKeyTested = true;
+            this.apiKeyValid = testTask.Result;
+            if (this.apiKeyValid)
+            {
+                this.plugin.Configuration.Save();
+            }
+        }
+
+        // Show coloured Text alongside the button
+        if (this.apiKeyTested)
+        {
+            ImGui.SameLine();
+            if (this.apiKeyValid)
+            {
+                ImGui.TextColored(GREEN, "Valid Key Saved!");
+            }
+            else
+            {
+                ImGui.TextColored(RED, "API Key Invalid. Please double check your API Key and try again!");
+            }
+        }
     }
 
     public override void Draw()
