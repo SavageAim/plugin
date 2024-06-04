@@ -74,7 +74,7 @@ public class SavageAimWindow : Window, IDisposable
 
         // Draw a List Box down the side, and selecting one displays the stuff on the right
         // TODO - Change from tabs to above idea
-        ImGui.BeginTabBar("bisListTabs");
+        ImGui.BeginTabBar("bisListTabs", ImGuiTabBarFlags.NoCloseWithMiddleMouseButton | ImGuiTabBarFlags.FittingPolicyScroll);
         foreach (var bis in this.bisLists)
         {
             var header = $"{bis.Name} ({bis.Job.Name})"
@@ -101,7 +101,7 @@ public class SavageAimWindow : Window, IDisposable
 
     public override void Draw()
     {
-        ImGui.BeginTabBar("saMainMenu");
+        ImGui.BeginTabBar("saMainMenu", ImGuiTabBarFlags.NoCloseWithMiddleMouseButton);
         if (ImGui.BeginTabItem("Current Gear"))
         {
             this.DrawCurrentGearTab();
