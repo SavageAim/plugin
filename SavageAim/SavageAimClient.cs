@@ -13,13 +13,18 @@ namespace SavageAimPlugin;
 
 public class SavageAimClient
 {
+    private static HttpClient GetClient(string apiKey) {
+        HttpClient client = new HttpClient();
+        // TODO - Replace with a proper API Key impl when it exists
+        client.DefaultRequestHeaders.Add("Cookie", $"sessionid={apiKey}");
+        return client;
+    }
+
     public static async Task<List<BISList>> GetBisLists(String apiKey, uint charId)
     {
         try
         {
-            using HttpClient client = new HttpClient();
-            // TODO - Replace with a proper API Key impl when it exists
-            client.DefaultRequestHeaders.Add("Cookie", $"sessionid={apiKey}");
+            using HttpClient client = GetClient(apiKey);
             var response = await client.GetAsync($"https://savageaim.com/backend/api/character/{charId}/bis_lists/");
             response.EnsureSuccessStatusCode();
             var bisListList = await JsonSerializer.DeserializeAsync<List<BISList>>(response.Content.ReadAsStream());
@@ -36,9 +41,7 @@ public class SavageAimClient
     {
         try
         {
-            using HttpClient client = new HttpClient();
-            // TODO - Replace with a proper API Key impl when it exists
-            client.DefaultRequestHeaders.Add("Cookie", $"sessionid={apiKey}");
+            using HttpClient client = GetClient(apiKey);
             var response = await client.GetAsync("https://savageaim.com/backend/api/character/");
             response.EnsureSuccessStatusCode();
             var charList = await JsonSerializer.DeserializeAsync<List<SACharacter>>(response.Content.ReadAsStream());
@@ -55,9 +58,7 @@ public class SavageAimClient
     {
         try
         {
-            using HttpClient client = new HttpClient();
-            // TODO - Replace with a proper API Key impl when it exists
-            client.DefaultRequestHeaders.Add("Cookie", $"sessionid={apiKey}");
+            using HttpClient client = GetClient(apiKey);
             var response = await client.GetAsync("https://savageaim.com/backend/api/gear/");
             response.EnsureSuccessStatusCode();
             var gearList = await JsonSerializer.DeserializeAsync<List<Gear>>(response.Content.ReadAsStream());
@@ -75,9 +76,7 @@ public class SavageAimClient
         PluginLog.Information($"Testing API Key: {apiKey}");
         try
         {
-            using HttpClient client = new HttpClient();
-            // TODO - Replace with a proper API Key impl when it exists
-            client.DefaultRequestHeaders.Add("Cookie", $"sessionid={apiKey}");
+            using HttpClient client = GetClient(apiKey);
             var response = await client.GetAsync("https://savageaim.com/backend/api/me/");
             response.EnsureSuccessStatusCode();
             return true;
