@@ -42,7 +42,10 @@ public class SavageAimWindow : Window, IDisposable
         this.plugin = plugin;
     }
 
-    public void Dispose() { }
+    public void Dispose() 
+    {
+        PluginLog.Information("Dispose");
+    }
 
     private async void LoadData()
     {
@@ -58,15 +61,13 @@ public class SavageAimWindow : Window, IDisposable
         var data = InGameCharacterData.Instance();
         this.saChar = charList.Find(sa => sa.Name == data.name && sa.World.Split(" ")[0] == data.world);
 
-        if (this.saChar == null)
+        if (this.saChar != null)
         {
-            return;
+            // Load the BIS Lists for the Character
+            var bisTask = SavageAimClient.GetBisLists(this.plugin.Configuration.apiKey, this.saChar.ID);
+            bisTask.Wait();
+            this.bisLists = bisTask.Result;
         }
-
-        // Load the BIS Lists for the Character
-        var bisTask = SavageAimClient.GetBisLists(this.plugin.Configuration.apiKey, this.saChar.ID);
-        bisTask.Wait();
-        this.bisLists = bisTask.Result;
 
         // Mark data as loaded for first run
         this.saDataLoaded = true;
@@ -103,7 +104,10 @@ public class SavageAimWindow : Window, IDisposable
             if (ImGui.BeginTabItem(header))
             {
                 this.DrawBisListDetails(bis);
-                ImGui.Button("Reload Data");
+                if (ImGui.Button("Reload Data"))
+                {
+                    this.LoadData();
+                }
                 if (data.job.ToString() == bis.Job.ID)
                 {
                     ImGui.SameLine();
@@ -276,6 +280,7 @@ public class SavageAimWindow : Window, IDisposable
         if (ImGui.Button("Open Savage Aim Settings"))
         {
             Util.OpenLink("https://savageaim.com/settings/");
+
         }
     }
 
@@ -309,6 +314,7 @@ public class SavageAimWindow : Window, IDisposable
                 {
                     if (!this.saDataLoading)
                     {
+                        PluginLog.Information("Calling .LoadData");
                         this.LoadData();
                     }
                     ImGui.Text("Loading, please wait...");
@@ -320,7 +326,7 @@ public class SavageAimWindow : Window, IDisposable
             }
             else
             {
-                ImGui.Text("Loading, please wait...");
+                ImGui.Text("Loading, please wait..");
             }
             ImGui.EndTabItem();
         }
@@ -333,7 +339,7 @@ public class SavageAimWindow : Window, IDisposable
         ImGui.EndTabBar();
     }
 
-    private void TestApiKey()
+    private async void TestApiKey()
     {
         var testTask = SavageAimClient.TestApiKey(this.plugin.Configuration.apiKey);
         testTask.Wait();
