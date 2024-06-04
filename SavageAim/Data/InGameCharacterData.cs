@@ -101,12 +101,14 @@ public struct InGameCharacterData
         // Mainhand | Offhand (if required)
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Mainhand");
         ImGui.TableNextColumn();
         ImGui.Text(mainhand);
         if (job == Job.PLD)
         {
             ImGui.TableNextColumn();
+            ImGui.TableHeader();
             ImGui.Text("Offhand");
             ImGui.TableNextColumn();
             ImGui.Text(offhand);
@@ -115,10 +117,12 @@ public struct InGameCharacterData
         // Head | Earrings
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Head");
         ImGui.TableNextColumn();
         ImGui.Text(head);
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Earrings");
         ImGui.TableNextColumn();
         ImGui.Text(earrings);
@@ -126,10 +130,12 @@ public struct InGameCharacterData
         // Body | Necklace
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Body");
         ImGui.TableNextColumn();
         ImGui.Text(body);
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Necklace");
         ImGui.TableNextColumn();
         ImGui.Text(necklace);
@@ -137,10 +143,12 @@ public struct InGameCharacterData
         // Hands | Bracelet
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Hands");
         ImGui.TableNextColumn();
         ImGui.Text(hands);
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Bracelet");
         ImGui.TableNextColumn();
         ImGui.Text(bracelet);
@@ -148,10 +156,12 @@ public struct InGameCharacterData
         // Legs | Right Ring
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Legs");
         ImGui.TableNextColumn();
         ImGui.Text(legs);
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Right Ring");
         ImGui.TableNextColumn();
         ImGui.Text(rightRing);
@@ -159,10 +169,12 @@ public struct InGameCharacterData
         // Feet | Left Ring
         ImGui.TableNextRow();
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Feet");
         ImGui.TableNextColumn();
         ImGui.Text(feet);
         ImGui.TableNextColumn();
+        ImGui.TableHeader();
         ImGui.Text("Left Ring");
         ImGui.TableNextColumn();
         ImGui.Text(leftRing);
