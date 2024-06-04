@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
+using Dalamud.Utility;
 using ImGuiNET;
 using SavageAimPlugin;
 using SavageAimPlugin.Data;
@@ -86,7 +87,10 @@ public class SavageAimWindow : Window, IDisposable
         if (this.saChar == null)
         {
             ImGui.Text("Your Current Character was not found in your Savage Aim Account.");
-            ImGui.Text("Visit https://savageaim.com/characters/new/ to add a new one!");
+            if (ImGui.Button("Add New Character"))
+            {
+                Util.OpenLink("https://savageaim.com/characters/new/");
+            }
             return;
         }
 
@@ -246,7 +250,6 @@ public class SavageAimWindow : Window, IDisposable
             this.plugin.Configuration.apiKey = apiKey;
             this.apiKeyTested = false;
         }
-        ImGui.Text("Visit https://savageaim.com/settings to get your API key.");
         if (ImGui.Button("Test and Save"))
         {
             this.TestApiKey();
@@ -268,6 +271,11 @@ public class SavageAimWindow : Window, IDisposable
             {
                 ImGui.TextColored(RED, "API Key Invalid. Please double check your API Key and try again!");
             }
+        }
+
+        if (ImGui.Button("Open Savage Aim Settings"))
+        {
+            Util.OpenLink("https://savageaim.com/settings/");
         }
     }
 
