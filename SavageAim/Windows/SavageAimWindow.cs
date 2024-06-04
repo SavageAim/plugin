@@ -12,9 +12,10 @@ namespace SavageAim.Windows;
 
 public class SavageAimWindow : Window, IDisposable
 {
-    private List<SACharacter> charList = new();
+    private List<BISList> bisLists = new();
     private List<Gear> gearList = new();
     private SavageAim plugin;
+    private SACharacter? saChar = null;
 
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
@@ -42,7 +43,15 @@ public class SavageAimWindow : Window, IDisposable
 
         var charTask = SavageAimClient.GetCharacters(this.plugin.Configuration.apiKey);
         charTask.Wait();
-        this.charList = charTask.Result;
+        var charList = charTask.Result;
+        var data = InGameCharacterData.Instance();
+        // Find the Character from SA that matches the inGame data
+        this.saChar = this.charList.Find(sa => sa.Name == inGameChar.name && sa.World.Split(" ")[0] == inGameChar.world);
+
+        // Load the BIS Lists for the Character
+        var bisTask = SavageAimClient.GetBisLists(this.plugin.Configuration.apiKey, this.saChar.ID);
+        bisTask.Wait();
+        this.bisLists = bisTask.Result;
     }
 
     private void DrawCurrentGearTab()
@@ -56,8 +65,7 @@ public class SavageAimWindow : Window, IDisposable
         var inGameChar = InGameCharacterData.Instance();
         // If the current Character isn't in the list, display an error message
         // Take only the first word of the world from SA since SA world contains DC as well
-        var saChar = this.charList.Find(sa => sa.Name == inGameChar.name && sa.World.Split(" ")[0] == inGameChar.world);
-        if (saChar == null)
+        if (this.saChar == null)
         {
             ImGui.Text("Your Current Character was not found in your Savage Aim Account.");
             ImGui.Text("Visit https://savageaim.com/characters/new/ to add a new one!");
@@ -67,11 +75,12 @@ public class SavageAimWindow : Window, IDisposable
         // Draw a List Box down the side, and selecting one displays the stuff on the right
         // TODO - Change from tabs to above idea
         ImGui.BeginTabBar("bisListTabs");
-        foreach (var bis in saChar.BISSummaries)
+        foreach (var bis in this.bisLists)
         {
-            if (ImGui.BeginTabItem(bis.Name))
+            var header = $"{bis.Name} ({bis.Job.Name})"
+            if (ImGui.BeginTabItem(header))
             {
-                ImGui.Text($"{bis.ID} - {bis.Name}");
+                bis.Draw();
                 ImGui.EndTabItem();
             }
         }
@@ -83,6 +92,7 @@ public class SavageAimWindow : Window, IDisposable
         String apiKey = this.plugin.Configuration.apiKey;
         if (ImGui.InputText("API Key", ref apiKey, 128))
         {
+            // Test the API Key before saving it.
             this.plugin.Configuration.apiKey = apiKey;
             this.plugin.Configuration.Save();
         }
@@ -111,14 +121,5 @@ public class SavageAimWindow : Window, IDisposable
             ImGui.EndTabItem();
         }
         ImGui.EndTabBar();
-
-        /*
-        if (ImGui.Button("Show Settings"))
-        {
-            this.plugin.ToggleConfigUI();
-        }
-
-        ImGui.Spacing();
-        */
     }
 }
