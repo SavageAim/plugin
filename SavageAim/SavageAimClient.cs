@@ -25,11 +25,11 @@ public class SavageAimClient
             var response = await client.GetAsync($"https://savageaim.com/backend/api/character/{charId}/");
             response.EnsureSuccessStatusCode();
             var characterDetails = await JsonSerializer.DeserializeAsync<SACharacterDetails>(response.Content.ReadAsStream());
-            Service.BISListDataManager.SetData(characterDetails.BISLists);
+            Service.BISListDataManager.SetData(characterDetails?.BISLists ?? []);
         }
         catch (HttpRequestException ex)
         {
-            PluginLog.Error($"Error Occurred when fetching BIS Lists: {ex.Message}");
+            Service.PluginLog.Error($"Error Occurred when fetching BIS Lists: {ex.Message}");
         }
     }
 
@@ -45,7 +45,7 @@ public class SavageAimClient
         }
         catch (HttpRequestException ex)
         {
-            PluginLog.Error("Error Occurred when fetching Characters", ex.Message);
+            Service.PluginLog.Error("Error Occurred when fetching Characters", ex.Message);
         }
         return new();
     }
@@ -62,14 +62,14 @@ public class SavageAimClient
         }
         catch (HttpRequestException ex)
         {
-            PluginLog.Error("Error Occurred when fetching Gear", ex.Message);
+            Service.PluginLog.Error("Error Occurred when fetching Gear", ex.Message);
         }
         return new();
     }
 
     public static async Task<bool> TestApiKey(string apiKey)
     {
-        PluginLog.Information($"Testing API Key: {apiKey}");
+        Service.PluginLog.Information($"Testing API Key: {apiKey}");
         try
         {
             using var client = GetClient(apiKey);
@@ -79,7 +79,7 @@ public class SavageAimClient
         }
         catch (HttpRequestException ex)
         {
-            PluginLog.Error("Error Occurred when testing API Key", ex.Message);
+            Service.PluginLog.Error("Error Occurred when testing API Key", ex.Message);
         }
         return false;
     }

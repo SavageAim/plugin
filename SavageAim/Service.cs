@@ -11,4 +11,5 @@ internal class Service
     internal static Configuration Configuration { get; set; } = null!;
 
     [PluginService] internal static IClientState ClientState { get; private set; } = null!;
+    [PluginService] internal static IPluginLog PluginLog { get; private set; } = null!;
 }

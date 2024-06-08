@@ -29,7 +29,7 @@ public class BISListDataManager
             if (task.Exception == null) return;
             foreach (var e in task.Exception.Flatten().InnerExceptions)
             {
-                PluginLog.Error(e, "Network error.");
+                Service.PluginLog.Error(e, "Network error.");
             }
         });
     }

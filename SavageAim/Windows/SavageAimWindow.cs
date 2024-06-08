@@ -19,9 +19,6 @@ public class SavageAimWindow : Window, IDisposable
     private bool saDataLoaded = false;
     private bool saDataLoading = false;
 
-    private Vector4 GREEN = new Vector4(82, 149, 128, 1);
-    private Vector4 RED = new Vector4(237, 18, 62, 1);
-
     // API Key Test Stuff
     private bool apiKeyTested = false;
     private bool apiKeyValid = false;
@@ -279,11 +276,11 @@ public class SavageAimWindow : Window, IDisposable
             ImGui.SameLine();
             if (this.apiKeyValid)
             {
-                ImGui.TextColored(GREEN, "Valid Key Saved!");
+                ImGui.Text("Valid Key Saved!");
             }
             else
             {
-                ImGui.TextColored(RED, "API Key Invalid. Please double check your API Key and try again!");
+                ImGui.Text("API Key Invalid. Please double check your API Key and try again!");
             }
         }
 
@@ -324,7 +321,6 @@ public class SavageAimWindow : Window, IDisposable
                 {
                     if (!this.saDataLoading)
                     {
-                        PluginLog.Information("Calling .LoadData");
                         this.LoadData();
                     }
                     ImGui.Text("Loading, please wait...");
