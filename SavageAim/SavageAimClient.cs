@@ -9,6 +9,8 @@ namespace SavageAimPlugin;
 
 public class SavageAimClient
 {
+    private static readonly string BaseUrl = "https://savageaim.com";
+
     private static HttpClient GetClient(string apiKey)
     {
         var client = new HttpClient();
@@ -22,7 +24,7 @@ public class SavageAimClient
         try
         {
             using var client = GetClient(apiKey);
-            var response = await client.GetAsync($"https://savageaim.com/backend/api/character/{charId}/");
+            var response = await client.GetAsync($"{BaseUrl}/backend/api/character/{charId}/");
             response.EnsureSuccessStatusCode();
             var characterDetails = await JsonSerializer.DeserializeAsync<SACharacterDetails>(response.Content.ReadAsStream());
             Service.BISListDataManager.SetData(characterDetails?.BISLists ?? []);
@@ -38,7 +40,7 @@ public class SavageAimClient
         try
         {
             using var client = GetClient(apiKey);
-            var response = await client.GetAsync("https://savageaim.com/backend/api/character/");
+            var response = await client.GetAsync($"{BaseUrl}/backend/api/character/");
             response.EnsureSuccessStatusCode();
             var charList = await JsonSerializer.DeserializeAsync<List<SACharacter>>(response.Content.ReadAsStream());
             Service.CharacterDataManager.SetData(charList ?? new());
@@ -60,7 +62,7 @@ public class SavageAimClient
         try
         {
             using var client = GetClient(apiKey);
-            var response = await client.GetAsync("https://savageaim.com/backend/api/me/");
+            var response = await client.GetAsync($"{BaseUrl}/backend/api/me/");
             response.EnsureSuccessStatusCode();
             // /me returns a valid response if you're not logged in. Token is valid if id is not null
             var userData = await JsonSerializer.DeserializeAsync<SAUser>(response.Content.ReadAsStream());
