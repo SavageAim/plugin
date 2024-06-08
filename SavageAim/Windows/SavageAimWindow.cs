@@ -15,10 +15,6 @@ public class SavageAimWindow : Window, IDisposable
 {
     private SavageAim plugin;
 
-    // API Key Test Stuff
-    private bool apiKeyTested = false;
-    private bool apiKeyValid = false;
-
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
     // but for ImGui the ID is "My Amazing Window##With a hidden ID"
@@ -35,6 +31,57 @@ public class SavageAimWindow : Window, IDisposable
     }
 
     public void Dispose() { }
+
+    private void CheckBisTabRequirements()
+    {
+        // Ensure our API Key is working before we use the System
+        if (Service.APIKeyManager is { IsDataLoading: false, IsDataReady: false, HasFailed: false })
+        {
+            Service.APIKeyManager.ValidateAPIKey();
+        }
+        if (Service.APIKeyManager is { IsDataReady: false, IsDataLoading: true })
+        {
+            ImGui.Text("Validating API Key...");
+            return;
+        }
+
+        if (Service.APIKeyManager is { IsDataLoading: false, HasFailed: true })
+        {
+            ImGui.Text("Failed to validate API Key");
+            if (ImGui.Button("Try Again?"))
+            {
+                Service.APIKeyManager.HasFailed = false;
+            }
+            return;
+        }
+
+        if (Service.APIKeyManager is { IsDataReady: true, APIKeyIsValid: false })
+        {
+            ImGui.Text("Please provide a valid API Key on the Settings Tab.");
+            return;
+        }
+
+        // Set the Character Data to Load if it hasn't been already.
+        if (Service.APIKeyManager is { IsDataReady: true, APIKeyIsValid: true })
+        {
+            if (Service.CharacterDataManager is { IsDataLoading: false, IsDataReady: false, HasFailed: false })
+            {
+                Service.CharacterDataManager.FetchData(Service.Configuration.apiKey);
+            }
+        }
+        if (Service.CharacterDataManager is { IsDataReady: false, IsDataLoading: true })
+        {
+            ImGui.Text("Fetching Characters from Savage Aim...");
+        }
+        else if (Service.CharacterDataManager is { IsDataLoading: false, HasFailed: true })
+        {
+            ImGui.Text("Failed to fetch SA Character Data");
+            if (ImGui.Button("Try Again?"))
+            {
+                Service.CharacterDataManager.HasFailed = false;
+            }
+        }
+    }
 
     private void DrawBisListsTab()
     {
@@ -232,43 +279,37 @@ public class SavageAimWindow : Window, IDisposable
         {
             // Test the API Key before saving it.
             Service.Configuration.apiKey = apiKey;
-            this.apiKeyTested = false;
+            Service.APIKeyManager.NeedsRevalidation = true;
         }
-        if (ImGui.Button("Test and Save"))
+        if (Service.APIKeyManager is { NeedsRevalidation: true })
         {
-            this.TestApiKey();
-            if (this.apiKeyValid)
+            if (ImGui.Button("Test and Save"))
             {
-                Service.Configuration.Save();
+                Service.APIKeyManager.ValidateAPIKey();
             }
         }
 
         // Show coloured Text alongside the button
-        if (this.apiKeyTested)
+        if (Service.APIKeyManager.IsDataReady)
         {
-            ImGui.SameLine();
-            if (this.apiKeyValid)
+            if (Service.APIKeyManager.APIKeyIsValid)
             {
                 ImGui.Text("Valid Key Saved!");
             }
-            else
+            else if (Service.Configuration.apiKey != "" && Service.APIKeyManager is { NeedsRevalidation: false })
             {
                 ImGui.Text("API Key Invalid. Please double check your API Key and try again!");
             }
+        }
+        else if (Service.APIKeyManager.HasFailed)
+        {
+            ImGui.Text("An error occurred trying to validated your API Key, please try again.");
         }
 
         if (ImGui.Button("Open Savage Aim Settings"))
         {
             Util.OpenLink("https://savageaim.com/settings/");
 
-        }
-    }
-
-    public override void PostDraw()
-    {
-        if (!this.apiKeyTested)
-        {
-            this.TestApiKey();
         }
     }
 
@@ -280,46 +321,11 @@ public class SavageAimWindow : Window, IDisposable
             return;
         }
 
-        // Set the Character Data to Load if it hasn't been already.
-        if (Service.CharacterDataManager is { IsDataLoading: false, IsDataReady: false, HasFailed: false })
-        {
-            Service.CharacterDataManager.FetchData(Service.Configuration.apiKey);
-        }
-
-        if (Service.CharacterDataManager is { IsDataReady: false, IsDataLoading: true })
-        {
-            ImGui.Text("Fetching Characters from Savage Aim...");
-            return;
-        }
-
-        if (Service.CharacterDataManager is { IsDataLoading: false, HasFailed: true })
-        {
-            ImGui.Text("Failed to fetch SA Character Data");
-            if (ImGui.Button("Try Again?"))
-            {
-                Service.CharacterDataManager.HasFailed = false;
-            }
-            return;
-        }
-
         ImGui.BeginTabBar("saMainMenu", ImGuiTabBarFlags.NoCloseWithMiddleMouseButton);
         if (ImGui.BeginTabItem("BIS Lists"))
         {
-            if (this.apiKeyTested)
-            {
-                if (!this.apiKeyValid)
-                {
-                    ImGui.Text("Please update the Settings Tab with a valid Savage Aim API Key!");
-                }
-                else
-                {
-                    this.DrawBisListsTab();
-                }
-            }
-            else
-            {
-                ImGui.Text("Loading, please wait..");
-            }
+            this.CheckBisTabRequirements();
+            if (Service.CharacterDataManager is { IsDataReady: true, IsDataLoading: false, HasFailed: false }) this.DrawBisListsTab();
             ImGui.EndTabItem();
         }
 
@@ -329,13 +335,5 @@ public class SavageAimWindow : Window, IDisposable
             ImGui.EndTabItem();
         }
         ImGui.EndTabBar();
-    }
-
-    private async void TestApiKey()
-    {
-        var testTask = SavageAimClient.TestApiKey(Service.Configuration.apiKey);
-        testTask.Wait();
-        this.apiKeyTested = true;
-        this.apiKeyValid = testTask.Result;
     }
 }

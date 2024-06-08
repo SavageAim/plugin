@@ -49,20 +49,27 @@ public class SavageAimClient
         }
     }
 
-    public static async Task<bool> TestApiKey(string apiKey)
+    public static async Task TestApiKey(string apiKey)
     {
-        Service.PluginLog.Information($"Testing API Key: {apiKey}");
+        if (apiKey == "")
+        {
+            Service.APIKeyManager.SetKeyIsValid(false);
+            return;
+        }
+
         try
         {
             using var client = GetClient(apiKey);
             var response = await client.GetAsync("https://savageaim.com/backend/api/me/");
             response.EnsureSuccessStatusCode();
-            return true;
+            // /me returns a valid response if you're not logged in. Token is valid if id is not null
+            var userData = await JsonSerializer.DeserializeAsync<SAUser>(response.Content.ReadAsStream());
+            Service.APIKeyManager.SetKeyIsValid(userData != null && userData.ID != null);
         }
         catch (HttpRequestException ex)
         {
             Service.PluginLog.Error("Error Occurred when testing API Key", ex.Message);
+            Service.APIKeyManager.SetKeyIsValid(false);
         }
-        return false;
     }
 }

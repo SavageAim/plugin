@@ -31,6 +31,7 @@ public sealed class SavageAim : IDalamudPlugin
         Service.Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Service.Configuration.Initialize(PluginInterface);
 
+        Service.APIKeyManager = new APIKeyManager();
         Service.BISListDataManager = new BISListDataManager();
         Service.CharacterDataManager = new CharacterDataManager();
 
