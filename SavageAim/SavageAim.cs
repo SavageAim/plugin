@@ -1,11 +1,12 @@
 using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
-using System.IO;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ECommons;
 using SavageAim.Windows;
+using SavageAimPlugin;
+using SavageAimPlugin.Manager;
 
 namespace SavageAim;
 
@@ -15,21 +16,22 @@ public sealed class SavageAim : IDalamudPlugin
 
     private DalamudPluginInterface PluginInterface { get; init; }
     private ICommandManager CommandManager { get; init; }
-    public Configuration Configuration { get; init; }
-
     public readonly WindowSystem WindowSystem = new("SavageAimPlugin");
     private SavageAimWindow MainWindow { get; init; }
 
     public SavageAim(
         [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
-        [RequiredVersion("1.0")] ICommandManager commandManager,
-        [RequiredVersion("1.0")] ITextureProvider textureProvider)
+        [RequiredVersion("1.0")] ICommandManager commandManager)
     {
         PluginInterface = pluginInterface;
         CommandManager = commandManager;
 
-        Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-        Configuration.Initialize(PluginInterface);
+        pluginInterface.Create<Service>();
+
+        Service.Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+        Service.Configuration.Initialize(PluginInterface);
+
+        Service.BISListDataManager = new BISListDataManager();
 
         MainWindow = new SavageAimWindow(this);
         WindowSystem.AddWindow(MainWindow);
@@ -47,6 +49,9 @@ public sealed class SavageAim : IDalamudPlugin
 
         // Add ECommons
         ECommonsMain.Init(pluginInterface, this);
+
+        // Add a Handler to the Logout to reset the data
+        Service.ClientState.Logout += ResetData;
     }
 
     public void Dispose()
@@ -57,12 +62,18 @@ public sealed class SavageAim : IDalamudPlugin
 
         CommandManager.RemoveHandler(CommandName);
         ECommonsMain.Dispose();
+        Service.ClientState.Logout -= ResetData;
     }
 
     private void OnCommand(string command, string args)
     {
         // in response to the slash command, just toggle the display status of our main ui
         ToggleMainUI();
+    }
+
+    private void ResetData()
+    {
+        Service.BISListDataManager.Reset();
     }
 
     private void DrawUI() => WindowSystem.Draw();

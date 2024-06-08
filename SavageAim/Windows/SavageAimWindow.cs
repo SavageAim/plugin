@@ -13,7 +13,6 @@ namespace SavageAim.Windows;
 
 public class SavageAimWindow : Window, IDisposable
 {
-    private BISList[] bisLists = [];
     private List<Gear> gearList = new();
     private SavageAim plugin;
     private SACharacter? saChar = null;
@@ -42,32 +41,21 @@ public class SavageAimWindow : Window, IDisposable
         this.plugin = plugin;
     }
 
-    public void Dispose() 
-    {
-        PluginLog.Information("Dispose");
-    }
+    public void Dispose() { }
 
     private async void LoadData()
     {
         this.saDataLoading = true;
-        var gearTask = SavageAimClient.GetGear(this.plugin.Configuration.apiKey);
+        var gearTask = SavageAimClient.GetGear(Service.Configuration.apiKey);
         gearTask.Wait();
         this.gearList = gearTask.Result;
 
-        var charTask = SavageAimClient.GetCharacters(this.plugin.Configuration.apiKey);
+        var charTask = SavageAimClient.GetCharacters(Service.Configuration.apiKey);
         charTask.Wait();
         var charList = charTask.Result;
         // Find the Character from SA that matches the inGame data
         var data = InGameCharacterData.Instance();
         this.saChar = charList.Find(sa => sa.Name == data.name && sa.World.Split(" ")[0] == data.world);
-
-        if (this.saChar != null)
-        {
-            // Load the BIS Lists for the Character
-            var bisTask = SavageAimClient.GetBisLists(this.plugin.Configuration.apiKey, this.saChar.ID);
-            bisTask.Wait();
-            this.bisLists = bisTask.Result;
-        }
 
         // Mark data as loaded for first run
         this.saDataLoaded = true;
@@ -95,10 +83,31 @@ public class SavageAimWindow : Window, IDisposable
             return;
         }
 
+        if (Service.BISListDataManager is { IsDataLoading: false, IsDataReady: false, HasFailed: false })
+        {
+            Service.BISListDataManager.FetchData(Service.Configuration.apiKey, this.saChar.ID);
+        }
+
+        if (Service.BISListDataManager is { IsDataReady: false, IsDataLoading: true })
+        {
+            ImGui.Text("Fetching BIS List Data...");
+            return;
+        }
+
+        if (Service.BISListDataManager is { IsDataLoading: false, HasFailed: true })
+        {
+            ImGui.Text("Failed to fetch BIS List Data");
+            if (ImGui.Button("Try Again?"))
+            {
+                Service.BISListDataManager.HasFailed = false;
+            }
+            return;
+        }
+
         // Draw a List Box down the side, and selecting one displays the stuff on the right
         // TODO - Change from tabs to above idea
         ImGui.BeginTabBar("bisListTabs", ImGuiTabBarFlags.NoCloseWithMiddleMouseButton | ImGuiTabBarFlags.FittingPolicyScroll);
-        foreach (var bis in this.bisLists)
+        foreach (var bis in Service.BISListDataManager.Data)
         {
             var header = $"{bis.DisplayName} ({bis.Job.ID})";
             if (ImGui.BeginTabItem(header))
@@ -106,7 +115,7 @@ public class SavageAimWindow : Window, IDisposable
                 this.DrawBisListDetails(bis);
                 if (ImGui.Button("Reload Data"))
                 {
-                    this.LoadData();
+                    Service.BISListDataManager.Reset();
                 }
                 if (data.job.ToString() == bis.Job.ID)
                 {
@@ -130,6 +139,7 @@ public class SavageAimWindow : Window, IDisposable
         ImGui.TableHeader("BIS");
         ImGui.TableNextColumn();
         ImGui.TableHeader("Current");
+
 
         // Mainhand
         ImGui.TableNextRow();
@@ -247,11 +257,11 @@ public class SavageAimWindow : Window, IDisposable
 
     private void DrawSettingsTab()
     {
-        String apiKey = this.plugin.Configuration.apiKey;
+        String apiKey = Service.Configuration.apiKey;
         if (ImGui.InputText("API Key", ref apiKey, 128))
         {
             // Test the API Key before saving it.
-            this.plugin.Configuration.apiKey = apiKey;
+            Service.Configuration.apiKey = apiKey;
             this.apiKeyTested = false;
         }
         if (ImGui.Button("Test and Save"))
@@ -259,7 +269,7 @@ public class SavageAimWindow : Window, IDisposable
             this.TestApiKey();
             if (this.apiKeyValid)
             {
-                this.plugin.Configuration.Save();
+                Service.Configuration.Save();
             }
         }
 
@@ -341,7 +351,7 @@ public class SavageAimWindow : Window, IDisposable
 
     private async void TestApiKey()
     {
-        var testTask = SavageAimClient.TestApiKey(this.plugin.Configuration.apiKey);
+        var testTask = SavageAimClient.TestApiKey(Service.Configuration.apiKey);
         testTask.Wait();
         this.apiKeyTested = true;
         this.apiKeyValid = testTask.Result;

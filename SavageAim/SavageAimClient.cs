@@ -1,11 +1,7 @@
 using Dalamud.Logging;
 using SavageAimPlugin.Data;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -13,35 +9,35 @@ namespace SavageAimPlugin;
 
 public class SavageAimClient
 {
-    private static HttpClient GetClient(string apiKey) {
-        HttpClient client = new HttpClient();
+    private static HttpClient GetClient(string apiKey)
+    {
+        var client = new HttpClient();
         // TODO - Replace with a proper API Key impl when it exists
         client.DefaultRequestHeaders.Add("Cookie", $"sessionid={apiKey}");
         return client;
     }
 
-    public static async Task<BISList[]> GetBisLists(String apiKey, uint charId)
+    public static async Task GetBisLists(string apiKey, uint charId)
     {
         try
         {
-            using HttpClient client = GetClient(apiKey);
+            using var client = GetClient(apiKey);
             var response = await client.GetAsync($"https://savageaim.com/backend/api/character/{charId}/");
             response.EnsureSuccessStatusCode();
             var characterDetails = await JsonSerializer.DeserializeAsync<SACharacterDetails>(response.Content.ReadAsStream());
-            return characterDetails.BISLists ?? [];
+            Service.BISListDataManager.SetData(characterDetails.BISLists);
         }
         catch (HttpRequestException ex)
         {
             PluginLog.Error($"Error Occurred when fetching BIS Lists: {ex.Message}");
         }
-        return [];
     }
 
-    public static async Task<List<SACharacter>> GetCharacters(String apiKey)
+    public static async Task<List<SACharacter>> GetCharacters(string apiKey)
     {
         try
         {
-            using HttpClient client = GetClient(apiKey);
+            using var client = GetClient(apiKey);
             var response = await client.GetAsync("https://savageaim.com/backend/api/character/");
             response.EnsureSuccessStatusCode();
             var charList = await JsonSerializer.DeserializeAsync<List<SACharacter>>(response.Content.ReadAsStream());
@@ -54,11 +50,11 @@ public class SavageAimClient
         return new();
     }
 
-    public static async Task<List<Gear>> GetGear(String apiKey)
+    public static async Task<List<Gear>> GetGear(string apiKey)
     {
         try
         {
-            using HttpClient client = GetClient(apiKey);
+            using var client = GetClient(apiKey);
             var response = await client.GetAsync("https://savageaim.com/backend/api/gear/");
             response.EnsureSuccessStatusCode();
             var gearList = await JsonSerializer.DeserializeAsync<List<Gear>>(response.Content.ReadAsStream());
@@ -71,12 +67,12 @@ public class SavageAimClient
         return new();
     }
 
-    public static async Task<bool> TestApiKey(String apiKey)
+    public static async Task<bool> TestApiKey(string apiKey)
     {
         PluginLog.Information($"Testing API Key: {apiKey}");
         try
         {
-            using HttpClient client = GetClient(apiKey);
+            using var client = GetClient(apiKey);
             var response = await client.GetAsync("https://savageaim.com/backend/api/me/");
             response.EnsureSuccessStatusCode();
             return true;
