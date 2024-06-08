@@ -11,6 +11,7 @@ internal class Service
     internal static BISListDataManager BISListDataManager { get; set; } = null!;
     internal static CharacterDataManager CharacterDataManager { get; set; } = null!;
     internal static Configuration Configuration { get; set; } = null!;
+    internal static GearImportManager GearImportManager { get; set; } = null!;
 
     [PluginService] internal static IClientState ClientState { get; private set; } = null!;
     [PluginService] internal static IPluginLog PluginLog { get; private set; } = null!;

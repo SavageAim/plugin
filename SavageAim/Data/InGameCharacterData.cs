@@ -1,9 +1,8 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using ECommons.ExcelServices;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using ImGuiNET;
-using SavageAim;
 
 namespace SavageAimPlugin.Data;
 
@@ -23,23 +22,57 @@ public enum GearSlots
     LEFT_RING = 12,
 }
 
+public record class InGameGear(
+    [property: JsonPropertyName("name")] string Name,
+    [property: JsonPropertyName("item_level")] uint ItemLevel
+);
+
 public class InGameCharacterData
 {
+    [JsonIgnore]
     public string Name { get; init; }
+    
+    [JsonIgnore]
     public string World { get; init; }
+    
+    [JsonIgnore]
     public Job Job { get; init; }
-    public string Mainhand { get; init; }
-    public string Offhand { get; init; }
-    public string Head { get; init; }
-    public string Body { get; init; }
-    public string Hands { get; init; }
-    public string Legs { get; init; }
-    public string Feet { get; init; }
-    public string Earrings { get; init; }
-    public string Necklace { get; init; }
-    public string Bracelet { get; init; }
-    public string RightRing { get; init; }
-    public string LeftRing { get; init; }
+    
+    [JsonPropertyName("mainhand")]
+    public InGameGear Mainhand { get; init; }
+    
+    [JsonPropertyName("offhand")]
+    public InGameGear Offhand { get; init; }
+    
+    [JsonPropertyName("head")]
+    public InGameGear Head { get; init; }
+    
+    [JsonPropertyName("body")]
+    public InGameGear Body { get; init; }
+    
+    [JsonPropertyName("hands")]
+    public InGameGear Hands { get; init; }
+    
+    [JsonPropertyName("legs")]
+    public InGameGear Legs { get; init; }
+    
+    [JsonPropertyName("feet")]
+    public InGameGear Feet { get; init; }
+    
+    [JsonPropertyName("earrings")]
+    public InGameGear Earrings { get; init; }
+    
+    [JsonPropertyName("necklace")]
+    public InGameGear Necklace { get; init; }
+    
+    [JsonPropertyName("bracelet")]
+    public InGameGear Bracelet { get; init; }
+    
+    [JsonPropertyName("right_ring")]
+    public InGameGear RightRing { get; init; }
+    
+    [JsonPropertyName("left_ring")]
+    public InGameGear LeftRing { get; init; }
 
     public unsafe InGameCharacterData()
     {
@@ -68,14 +101,13 @@ public class InGameCharacterData
         }
     }
 
-    private static unsafe string GetGearName(GearSlots slot)
+    private static unsafe InGameGear GetGearName(GearSlots slot)
     {
         var manager = InventoryManager.Instance();
         var item = manager->GetInventorySlot(InventoryType.EquippedItems, (int)slot);
         var i = ExcelItemHelper.Get(item->ItemID);
         // var itemLevel = i.LevelItem.Value.RowId;
-        var name = i.GetName();
-        return name;
+        return new InGameGear(i.GetName(), i.LevelItem.Value.RowId);
     }
 
     public override string ToString()

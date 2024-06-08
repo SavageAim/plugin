@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text.Json;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
 using Dalamud.Utility;
@@ -137,7 +138,11 @@ public class SavageAimWindow : Window, IDisposable
                 if (currentIGChar.Job.ToString() == bis.Job.ID)
                 {
                     ImGui.SameLine();
-                    ImGui.Button("Save Current Gear");
+                    if (ImGui.Button("Save Current Gear"))
+                    {
+                        Service.GearImportManager.Reset();
+                        this.plugin.UpdateWindow.UpdateBis(bis);
+                    }
                 }
                 ImGui.EndTabItem();
             }

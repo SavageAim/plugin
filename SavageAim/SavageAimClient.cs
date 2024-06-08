@@ -1,7 +1,7 @@
-using Dalamud.Logging;
 using SavageAimPlugin.Data;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -9,46 +9,53 @@ namespace SavageAimPlugin;
 
 public class SavageAimClient
 {
-    private static readonly string BaseUrl = "https://savageaim.com";
+    private static readonly string BaseUrl = "http://192.168.178.19:8080";
 
     private static HttpClient GetClient(string apiKey)
     {
         var client = new HttpClient();
         // TODO - Replace with a proper API Key impl when it exists
-        client.DefaultRequestHeaders.Add("Cookie", $"sessionid={apiKey}");
+        client.DefaultRequestHeaders.Add("Authorization", $"Token {apiKey}");
         return client;
     }
 
     public static async Task GetBisLists(string apiKey, uint charId)
     {
-        try
-        {
-            using var client = GetClient(apiKey);
-            var response = await client.GetAsync($"{BaseUrl}/backend/api/character/{charId}/");
-            response.EnsureSuccessStatusCode();
-            var characterDetails = await JsonSerializer.DeserializeAsync<SACharacterDetails>(response.Content.ReadAsStream());
-            Service.BISListDataManager.SetData(characterDetails?.BISLists ?? []);
-        }
-        catch (HttpRequestException ex)
-        {
-            Service.PluginLog.Error($"Error Occurred when fetching BIS Lists: {ex.Message}");
-        }
+        using var client = GetClient(apiKey);
+        var response = await client.GetAsync($"{BaseUrl}/backend/api/character/{charId}/");
+        response.EnsureSuccessStatusCode();
+        var characterDetails = await JsonSerializer.DeserializeAsync<SACharacterDetails>(response.Content.ReadAsStream());
+        Service.BISListDataManager.SetData(characterDetails?.BISLists ?? []);
     }
 
     public static async Task GetCharacters(string apiKey)
     {
-        try
+        using var client = GetClient(apiKey);
+        var response = await client.GetAsync($"{BaseUrl}/backend/api/character/");
+        response.EnsureSuccessStatusCode();
+        var charList = await JsonSerializer.DeserializeAsync<List<SACharacter>>(response.Content.ReadAsStream());
+        Service.CharacterDataManager.SetData(charList ?? new());
+    }
+
+    public static async Task ImportCurrentGear(string apiKey)
+    {
+        var currentCharacter = Service.CharacterDataManager.InGameCharacter;
+        if (currentCharacter == null)
         {
-            using var client = GetClient(apiKey);
-            var response = await client.GetAsync($"{BaseUrl}/backend/api/character/");
-            response.EnsureSuccessStatusCode();
-            var charList = await JsonSerializer.DeserializeAsync<List<SACharacter>>(response.Content.ReadAsStream());
-            Service.CharacterDataManager.SetData(charList ?? new());
+            Service.GearImportManager.SetData(null);
+            return;
         }
-        catch (HttpRequestException ex)
-        {
-            Service.PluginLog.Error("Error Occurred when fetching Characters", ex.Message);
-        }
+
+        using var client = GetClient(apiKey);
+
+        // Prepare request body
+        string json = JsonSerializer.Serialize(currentCharacter);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync($"{BaseUrl}/backend/api/import/plugin/", content);
+        response.EnsureSuccessStatusCode();
+        var importResponse = await JsonSerializer.DeserializeAsync<ImportResponse> (response.Content.ReadAsStream());
+        Service.GearImportManager.SetData(importResponse);
     }
 
     public static async Task TestApiKey(string apiKey)
@@ -59,19 +66,11 @@ public class SavageAimClient
             return;
         }
 
-        try
-        {
-            using var client = GetClient(apiKey);
-            var response = await client.GetAsync($"{BaseUrl}/backend/api/me/");
-            response.EnsureSuccessStatusCode();
-            // /me returns a valid response if you're not logged in. Token is valid if id is not null
-            var userData = await JsonSerializer.DeserializeAsync<SAUser>(response.Content.ReadAsStream());
-            Service.APIKeyManager.SetKeyIsValid(userData != null && userData.ID != null);
-        }
-        catch (HttpRequestException ex)
-        {
-            Service.PluginLog.Error("Error Occurred when testing API Key", ex.Message);
-            Service.APIKeyManager.SetKeyIsValid(false);
-        }
+        using var client = GetClient(apiKey);
+        var response = await client.GetAsync($"{BaseUrl}/backend/api/me/");
+        response.EnsureSuccessStatusCode();
+        // /me returns a valid response if you're not logged in. Token is valid if id is not null
+        var userData = await JsonSerializer.DeserializeAsync<SAUser>(response.Content.ReadAsStream());
+        Service.APIKeyManager.SetKeyIsValid(userData != null && userData.ID != null);
     }
 }

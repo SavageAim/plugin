@@ -18,6 +18,7 @@ public sealed class SavageAim : IDalamudPlugin
     private ICommandManager CommandManager { get; init; }
     public readonly WindowSystem WindowSystem = new("SavageAimPlugin");
     private SavageAimWindow MainWindow { get; init; }
+    public GearUpdateWindow UpdateWindow { get; init; }
 
     public SavageAim(
         [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
@@ -34,9 +35,12 @@ public sealed class SavageAim : IDalamudPlugin
         Service.APIKeyManager = new APIKeyManager();
         Service.BISListDataManager = new BISListDataManager();
         Service.CharacterDataManager = new CharacterDataManager();
+        Service.GearImportManager = new GearImportManager();
 
         MainWindow = new SavageAimWindow(this);
         WindowSystem.AddWindow(MainWindow);
+        UpdateWindow = new GearUpdateWindow(this);
+        WindowSystem.AddWindow(UpdateWindow);
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {

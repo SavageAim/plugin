@@ -1,16 +1,17 @@
+using Dalamud.Logging;
+using SavageAimPlugin.Data;
 using System.Threading.Tasks;
 
 namespace SavageAimPlugin.Manager;
 
-public class APIKeyManager
+public class GearImportManager
 {
     public volatile bool IsDataReady;
     public volatile bool IsDataLoading;
     public volatile bool HasFailed;
-    public volatile bool NeedsRevalidation;
-    public volatile bool APIKeyIsValid = false;
+    public ImportResponse? Data;
 
-    public void ValidateAPIKey()
+    public void FetchData(string apiKey)
     {
         if (this.IsDataLoading) return;
 
@@ -18,7 +19,7 @@ public class APIKeyManager
         this.IsDataLoading = true;
         Task.Run(async () =>
         {
-            await SavageAimClient.TestApiKey(Service.Configuration.apiKey).ConfigureAwait(false);
+            await SavageAimClient.ImportCurrentGear(apiKey).ConfigureAwait(false);
         }).ContinueWith(task =>
         {
             if (!this.IsDataReady) this.HasFailed = true;
@@ -33,20 +34,16 @@ public class APIKeyManager
         });
     }
 
-    public void SetKeyIsValid(bool valid)
+    public void SetData(ImportResponse? data)
     {
-        this.APIKeyIsValid = valid;
+        this.Data = data;
         this.IsDataReady = true;
-        this.NeedsRevalidation = false;
-        Service.Configuration.Save();
-        Service.CharacterDataManager.Reset();
-        Service.BISListDataManager.Reset();
     }
 
     public void Reset()
     {
         this.IsDataReady = false;
-        this.APIKeyIsValid = false;
+        this.Data = null;
         this.IsDataLoading = false;
         this.HasFailed = false;
     }
