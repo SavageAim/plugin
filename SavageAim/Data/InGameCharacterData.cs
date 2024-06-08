@@ -23,23 +23,50 @@ public enum GearSlots
     LEFT_RING = 12,
 }
 
-public struct InGameCharacterData
+public class InGameCharacterData
 {
-    public string name;
-    public string world;
-    public Job job;
-    public string mainhand;
-    public string offhand;
-    public string head;
-    public string body;
-    public string hands;
-    public string legs;
-    public string feet;
-    public string earrings;
-    public string necklace;
-    public string bracelet;
-    public string rightRing;
-    public string leftRing;
+    public string Name { get; init; }
+    public string World { get; init; }
+    public Job Job { get; init; }
+    public string Mainhand { get; init; }
+    public string Offhand { get; init; }
+    public string Head { get; init; }
+    public string Body { get; init; }
+    public string Hands { get; init; }
+    public string Legs { get; init; }
+    public string Feet { get; init; }
+    public string Earrings { get; init; }
+    public string Necklace { get; init; }
+    public string Bracelet { get; init; }
+    public string RightRing { get; init; }
+    public string LeftRing { get; init; }
+
+    public unsafe InGameCharacterData()
+    {
+        Name = Player.Name;
+        World = Player.HomeWorld;
+        Job = Player.Job;
+        Mainhand = GetGearName(GearSlots.MAINHAND);
+        Head = GetGearName(GearSlots.HEAD);
+        Body = GetGearName(GearSlots.BODY);
+        Hands = GetGearName(GearSlots.HANDS);
+        Legs = GetGearName(GearSlots.LEGS);
+        Feet = GetGearName(GearSlots.FEET);
+        Earrings = GetGearName(GearSlots.EARRINGS);
+        Necklace = GetGearName(GearSlots.NECKLACE);
+        Bracelet = GetGearName(GearSlots.BRACELET);
+        RightRing = GetGearName(GearSlots.RIGHT_RING);
+        LeftRing = GetGearName(GearSlots.LEFT_RING);
+
+        if (this.Job == Job.PLD)
+        {
+            Offhand = GetGearName(GearSlots.OFFHAND);
+        }
+        else
+        {
+            Offhand = Mainhand;
+        }
+    }
 
     private static unsafe string GetGearName(GearSlots slot)
     {
@@ -51,122 +78,23 @@ public struct InGameCharacterData
         return name;
     }
 
-    public static unsafe InGameCharacterData Instance()
-    {
-        var data = new InGameCharacterData
-        {
-            name = Player.Name,
-            world = Player.HomeWorld,
-            job = Player.Job,
-            mainhand = GetGearName(GearSlots.MAINHAND),
-            head = GetGearName(GearSlots.HEAD),
-            body = GetGearName(GearSlots.BODY),
-            hands = GetGearName(GearSlots.HANDS),
-            legs = GetGearName(GearSlots.LEGS),
-            feet = GetGearName(GearSlots.FEET),
-            earrings = GetGearName(GearSlots.EARRINGS),
-            necklace = GetGearName(GearSlots.NECKLACE),
-            bracelet = GetGearName(GearSlots.BRACELET),
-            rightRing = GetGearName(GearSlots.RIGHT_RING),
-            leftRing = GetGearName(GearSlots.LEFT_RING),
-        };
-
-        if (data.job == Job.PLD) data.offhand = GetGearName(GearSlots.OFFHAND);
-        return data;
-    }
-
     public override string ToString()
     {
         var builder = new StringBuilder();
-        builder.AppendLine($"{name}@{world}");
-        builder.AppendLine($"{job}");
-        builder.AppendLine($"Mainhand: {mainhand}");
-        if (job == Job.PLD) builder.AppendLine($"Offhand: {offhand}");
-        builder.AppendLine($"Head: {head}");
-        builder.AppendLine($"Body: {body}");
-        builder.AppendLine($"Hands: {hands}");
-        builder.AppendLine($"Legs: {legs}");
-        builder.AppendLine($"Feet: {feet}");
-        builder.AppendLine($"Earrings: {earrings}");
-        builder.AppendLine($"Necklace: {necklace}");
-        builder.AppendLine($"Bracelet: {bracelet}");
-        builder.AppendLine($"Right Ring: {rightRing}");
-        builder.AppendLine($"Left Ring: {leftRing}");
+        builder.AppendLine($"{Name}@{World}");
+        builder.AppendLine($"{Job}");
+        builder.AppendLine($"Mainhand: {Mainhand}");
+        if (this.Job == Job.PLD) builder.AppendLine($"Offhand: {Offhand}");
+        builder.AppendLine($"Head: {Head}");
+        builder.AppendLine($"Body: {Body}");
+        builder.AppendLine($"Hands: {Hands}");
+        builder.AppendLine($"Legs: {Legs}");
+        builder.AppendLine($"Feet: {Feet}");
+        builder.AppendLine($"Earrings: {Earrings}");
+        builder.AppendLine($"Necklace: {Necklace}");
+        builder.AppendLine($"Bracelet: {Bracelet}");
+        builder.AppendLine($"Right Ring: {RightRing}");
+        builder.AppendLine($"Left Ring: {LeftRing}");
         return builder.ToString();
-    }
-
-    public void Draw()
-    {
-        ImGui.BeginTable($"currGear-{job}", 4, ImGuiTableFlags.BordersH | ImGuiTableFlags.BordersV);
-        // Mainhand | Offhand (if required)
-        ImGui.TableNextRow();
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Mainhand");
-        ImGui.TableNextColumn();
-        ImGui.Text(mainhand);
-        if (job == Job.PLD)
-        {
-            ImGui.TableNextColumn();
-            ImGui.TableHeader("Offhand");
-            ImGui.TableNextColumn();
-            ImGui.Text(offhand);
-        }
-
-        // Head | Earrings
-        ImGui.TableNextRow();
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Head");
-        ImGui.TableNextColumn();
-        ImGui.Text(head);
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Earrings");
-        ImGui.TableNextColumn();
-        ImGui.Text(earrings);
-
-        // Body | Necklace
-        ImGui.TableNextRow();
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Body");
-        ImGui.TableNextColumn();
-        ImGui.Text(body);
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Necklace");
-        ImGui.TableNextColumn();
-        ImGui.Text(necklace);
-
-        // Hands | Bracelet
-        ImGui.TableNextRow();
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Hands");
-        ImGui.TableNextColumn();
-        ImGui.Text(hands);
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Bracelet");
-        ImGui.TableNextColumn();
-        ImGui.Text(bracelet);
-
-        // Legs | Right Ring
-        ImGui.TableNextRow();
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Legs");
-        ImGui.TableNextColumn();
-        ImGui.Text(legs);
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Right Ring");
-        ImGui.TableNextColumn();
-        ImGui.Text(rightRing);
-
-        // Feet | Left Ring
-        ImGui.TableNextRow();
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Feet");
-        ImGui.TableNextColumn();
-        ImGui.Text(feet);
-        ImGui.TableNextColumn();
-        ImGui.TableHeader("Left Ring");
-        ImGui.TableNextColumn();
-        ImGui.Text(leftRing);
-
-        ImGui.EndTable();
     }
 }

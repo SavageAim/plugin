@@ -33,7 +33,7 @@ public class SavageAimClient
         }
     }
 
-    public static async Task<List<SACharacter>> GetCharacters(string apiKey)
+    public static async Task GetCharacters(string apiKey)
     {
         try
         {
@@ -41,30 +41,12 @@ public class SavageAimClient
             var response = await client.GetAsync("https://savageaim.com/backend/api/character/");
             response.EnsureSuccessStatusCode();
             var charList = await JsonSerializer.DeserializeAsync<List<SACharacter>>(response.Content.ReadAsStream());
-            return charList ?? new();
+            Service.CharacterDataManager.SetData(charList ?? new());
         }
         catch (HttpRequestException ex)
         {
             Service.PluginLog.Error("Error Occurred when fetching Characters", ex.Message);
         }
-        return new();
-    }
-
-    public static async Task<List<Gear>> GetGear(string apiKey)
-    {
-        try
-        {
-            using var client = GetClient(apiKey);
-            var response = await client.GetAsync("https://savageaim.com/backend/api/gear/");
-            response.EnsureSuccessStatusCode();
-            var gearList = await JsonSerializer.DeserializeAsync<List<Gear>>(response.Content.ReadAsStream());
-            return gearList ?? new();
-        }
-        catch (HttpRequestException ex)
-        {
-            Service.PluginLog.Error("Error Occurred when fetching Gear", ex.Message);
-        }
-        return new();
     }
 
     public static async Task<bool> TestApiKey(string apiKey)

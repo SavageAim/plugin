@@ -32,6 +32,7 @@ public sealed class SavageAim : IDalamudPlugin
         Service.Configuration.Initialize(PluginInterface);
 
         Service.BISListDataManager = new BISListDataManager();
+        Service.CharacterDataManager = new CharacterDataManager();
 
         MainWindow = new SavageAimWindow(this);
         WindowSystem.AddWindow(MainWindow);
@@ -62,6 +63,8 @@ public sealed class SavageAim : IDalamudPlugin
 
         CommandManager.RemoveHandler(CommandName);
         ECommonsMain.Dispose();
+
+        // Remove Event Handlers
         Service.ClientState.Logout -= ResetData;
     }
 

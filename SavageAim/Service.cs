@@ -8,6 +8,7 @@ namespace SavageAimPlugin;
 internal class Service
 {
     internal static BISListDataManager BISListDataManager { get; set; } = null!;
+    internal static CharacterDataManager CharacterDataManager { get; set; } = null!;
     internal static Configuration Configuration { get; set; } = null!;
 
     [PluginService] internal static IClientState ClientState { get; private set; } = null!;

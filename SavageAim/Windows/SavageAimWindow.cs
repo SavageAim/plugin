@@ -13,11 +13,7 @@ namespace SavageAim.Windows;
 
 public class SavageAimWindow : Window, IDisposable
 {
-    private List<Gear> gearList = new();
     private SavageAim plugin;
-    private SACharacter? saChar = null;
-    private bool saDataLoaded = false;
-    private bool saDataLoading = false;
 
     // API Key Test Stuff
     private bool apiKeyTested = false;
@@ -40,37 +36,14 @@ public class SavageAimWindow : Window, IDisposable
 
     public void Dispose() { }
 
-    private async void LoadData()
-    {
-        this.saDataLoading = true;
-        var gearTask = SavageAimClient.GetGear(Service.Configuration.apiKey);
-        gearTask.Wait();
-        this.gearList = gearTask.Result;
-
-        var charTask = SavageAimClient.GetCharacters(Service.Configuration.apiKey);
-        charTask.Wait();
-        var charList = charTask.Result;
-        // Find the Character from SA that matches the inGame data
-        var data = InGameCharacterData.Instance();
-        this.saChar = charList.Find(sa => sa.Name == data.name && sa.World.Split(" ")[0] == data.world);
-
-        // Mark data as loaded for first run
-        this.saDataLoaded = true;
-        this.saDataLoading = false;
-    }
-
-    private void DrawCurrentGearTab()
-    {
-        var data = InGameCharacterData.Instance();
-        data.Draw();
-    }
-
     private void DrawBisListsTab()
     {
-        var data = InGameCharacterData.Instance();
         // If the current Character isn't in the list, display an error message
         // Take only the first word of the world from SA since SA world contains DC as well
-        if (this.saChar == null)
+        var currentIGChar = Service.CharacterDataManager.InGameCharacter;
+        if (currentIGChar == null) return;
+        var currentSAChar = Service.CharacterDataManager.GetCurrentCharacterInSA();
+        if (currentSAChar == null)
         {
             ImGui.Text("Your Current Character was not found in your Savage Aim Account.");
             if (ImGui.Button("Add New Character"))
@@ -82,7 +55,7 @@ public class SavageAimWindow : Window, IDisposable
 
         if (Service.BISListDataManager is { IsDataLoading: false, IsDataReady: false, HasFailed: false })
         {
-            Service.BISListDataManager.FetchData(Service.Configuration.apiKey, this.saChar.ID);
+            Service.BISListDataManager.FetchData(Service.Configuration.apiKey, currentSAChar.ID);
         }
 
         if (Service.BISListDataManager is { IsDataReady: false, IsDataLoading: true })
@@ -114,7 +87,7 @@ public class SavageAimWindow : Window, IDisposable
                 {
                     Service.BISListDataManager.Reset();
                 }
-                if (data.job.ToString() == bis.Job.ID)
+                if (currentIGChar.Job.ToString() == bis.Job.ID)
                 {
                     ImGui.SameLine();
                     ImGui.Button("Save Current Gear");
@@ -301,14 +274,35 @@ public class SavageAimWindow : Window, IDisposable
 
     public override void Draw()
     {
-        ImGui.BeginTabBar("saMainMenu", ImGuiTabBarFlags.NoCloseWithMiddleMouseButton);
-        if (ImGui.BeginTabItem("Current Gear"))
+        if (Service.CharacterDataManager.InGameCharacter == null)
         {
-            this.DrawCurrentGearTab();
-            ImGui.EndTabItem();
+            ImGui.Text("Please log in as a Character to use the Plugin!");
+            return;
         }
-        
 
+        // Set the Character Data to Load if it hasn't been already.
+        if (Service.CharacterDataManager is { IsDataLoading: false, IsDataReady: false, HasFailed: false })
+        {
+            Service.CharacterDataManager.FetchData(Service.Configuration.apiKey);
+        }
+
+        if (Service.CharacterDataManager is { IsDataReady: false, IsDataLoading: true })
+        {
+            ImGui.Text("Fetching Characters from Savage Aim...");
+            return;
+        }
+
+        if (Service.CharacterDataManager is { IsDataLoading: false, HasFailed: true })
+        {
+            ImGui.Text("Failed to fetch SA Character Data");
+            if (ImGui.Button("Try Again?"))
+            {
+                Service.CharacterDataManager.HasFailed = false;
+            }
+            return;
+        }
+
+        ImGui.BeginTabBar("saMainMenu", ImGuiTabBarFlags.NoCloseWithMiddleMouseButton);
         if (ImGui.BeginTabItem("BIS Lists"))
         {
             if (this.apiKeyTested)
@@ -316,14 +310,6 @@ public class SavageAimWindow : Window, IDisposable
                 if (!this.apiKeyValid)
                 {
                     ImGui.Text("Please update the Settings Tab with a valid Savage Aim API Key!");
-                }
-                else if (!this.saDataLoaded)
-                {
-                    if (!this.saDataLoading)
-                    {
-                        this.LoadData();
-                    }
-                    ImGui.Text("Loading, please wait...");
                 }
                 else
                 {
