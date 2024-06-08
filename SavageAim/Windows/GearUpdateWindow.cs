@@ -32,7 +32,7 @@ public class GearUpdateWindow : Window, IDisposable
     public void UpdateBis(BISList bis)
     {
         this.toUpdate = bis;
-        this.WindowName = $"Savage Aim - Update {bis.DisplayName}###Update Window";
+        this.WindowName = $"Savage Aim - Update {bis.DisplayName} ({bis.Job.ID})###Update Window";
         if (!this.IsOpen) this.Toggle();
     }
 
@@ -58,7 +58,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(this.toUpdate.CurrentMainhand.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentMainhand.Name != Service.GearImportManager.Data.Mainhand.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentMainhand.Name != Service.GearImportManager.Data.Mainhand.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.Mainhand.Name);
 
@@ -71,7 +71,7 @@ public class GearUpdateWindow : Window, IDisposable
             ImGui.TableNextColumn();
             ImGui.Text(toUpdate.CurrentOffhand.Name);
             ImGui.TableNextColumn();
-            if (this.toUpdate.CurrentOffhand.Name != Service.GearImportManager.Data.Offhand.Name) ImGui.Text("->");
+            if (this.toUpdate.CurrentOffhand.Name != Service.GearImportManager.Data.Offhand.Name) ImGui.Text("=>");
             ImGui.TableNextColumn();
             ImGui.Text(Service.GearImportManager.Data.Offhand.Name);
         }
@@ -83,7 +83,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(toUpdate.CurrentHead.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentHead.Name != Service.GearImportManager.Data.Head.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentHead.Name != Service.GearImportManager.Data.Head.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.Head.Name);
 
@@ -94,7 +94,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(toUpdate.CurrentBody.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentBody.Name != Service.GearImportManager.Data.Body.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentBody.Name != Service.GearImportManager.Data.Body.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.Body.Name);
 
@@ -105,7 +105,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(toUpdate.CurrentHands.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentHands.Name != Service.GearImportManager.Data.Hands.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentHands.Name != Service.GearImportManager.Data.Hands.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.Hands.Name);
 
@@ -116,7 +116,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(toUpdate.CurrentLegs.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentLegs.Name != Service.GearImportManager.Data.Legs.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentLegs.Name != Service.GearImportManager.Data.Legs.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.Legs.Name);
 
@@ -127,7 +127,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(toUpdate.CurrentFeet.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentFeet.Name != Service.GearImportManager.Data.Feet.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentFeet.Name != Service.GearImportManager.Data.Feet.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.Feet.Name);
 
@@ -138,7 +138,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(toUpdate.CurrentEarrings.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentEarrings.Name != Service.GearImportManager.Data.Earrings.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentEarrings.Name != Service.GearImportManager.Data.Earrings.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.Earrings.Name);
 
@@ -149,7 +149,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(toUpdate.CurrentNecklace.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentNecklace.Name != Service.GearImportManager.Data.Necklace.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentNecklace.Name != Service.GearImportManager.Data.Necklace.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.Necklace.Name);
 
@@ -160,7 +160,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(toUpdate.CurrentBracelet.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentBracelet.Name != Service.GearImportManager.Data.Bracelet.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentBracelet.Name != Service.GearImportManager.Data.Bracelet.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.Bracelet.Name);
 
@@ -171,7 +171,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(toUpdate.CurrentRightRing.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentRightRing.Name != Service.GearImportManager.Data.RightRing.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentRightRing.Name != Service.GearImportManager.Data.RightRing.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.RightRing.Name);
 
@@ -182,7 +182,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.Text(toUpdate.CurrentLeftRing.Name);
         ImGui.TableNextColumn();
-        if (this.toUpdate.CurrentLeftRing.Name != Service.GearImportManager.Data.LeftRing.Name) ImGui.Text("->");
+        if (this.toUpdate.CurrentLeftRing.Name != Service.GearImportManager.Data.LeftRing.Name) ImGui.Text("=>");
         ImGui.TableNextColumn();
         ImGui.Text(Service.GearImportManager.Data.LeftRing.Name);
 
@@ -222,5 +222,12 @@ public class GearUpdateWindow : Window, IDisposable
             return;
         }
         this.DrawUpdateTable();
+        ImGui.Spacing();
+        ImGui.Text("If you are happy with these changes, click the Save button below, and the BIS List will be updated on the site!");
+        ImGui.Text("If not, close this window, make any changes you need and click the Save Current Data button when ready!");
+        if (ImGui.Button("Save These Changes"))
+        {
+            Service.PluginLog.Info("Saving Changes");
+        }
     }
 }
