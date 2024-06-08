@@ -10,7 +10,7 @@ namespace SavageAim.Windows;
 public class GearUpdateWindow : Window, IDisposable
 {
     private SavageAim plugin;
-    private BISList? toUpdate;
+    public BISList? toUpdate;
 
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
@@ -227,7 +227,23 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.Text("If not, close this window, make any changes you need and click the Save Current Data button when ready!");
         if (ImGui.Button("Save These Changes"))
         {
-            Service.PluginLog.Info("Saving Changes");
+            Service.GearImportManager.SaveBis(Service.Configuration.apiKey, this.toUpdate, Service.GearImportManager.Data);
+        }
+        ImGui.SameLine();
+        if (Service.GearImportManager is { IsSaving: true })
+        {
+            ImGui.Text("Saving...");
+            return;
+        }
+        if (Service.GearImportManager is { HasFailedSaving: true })
+        {
+            ImGui.Text("Error occurred while saving!");
+            return;
+        }
+        if (Service.GearImportManager is { HasSaved: true, IsSaving: false, HasFailedSaving: false })
+        {
+            Service.BISListDataManager.Reset();
+            this.Toggle();
         }
     }
 }

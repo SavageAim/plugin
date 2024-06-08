@@ -143,6 +143,14 @@ public class SavageAimWindow : Window, IDisposable
                         Service.GearImportManager.Reset();
                         this.plugin.UpdateWindow.UpdateBis(bis);
                     }
+                    if (Service.GearImportManager is { HasSaved: true, IsSaving: false, HasFailedSaving: false })
+                    {
+                        if (this.plugin.UpdateWindow.toUpdate != null && this.plugin.UpdateWindow.toUpdate.ID == bis.ID)
+                        {
+                            ImGui.SameLine();
+                            ImGui.Text("Saved!");
+                        }
+                    }
                 }
                 ImGui.EndTabItem();
             }

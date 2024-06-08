@@ -73,4 +73,23 @@ public class SavageAimClient
         var userData = await JsonSerializer.DeserializeAsync<SAUser>(response.Content.ReadAsStream());
         Service.APIKeyManager.SetKeyIsValid(userData != null && userData.ID != null);
     }
+
+    public static async Task UpdateBis(string apiKey, BISListModify data)
+    {
+        var currentCharacter = Service.CharacterDataManager.GetCurrentCharacterInSA();
+        if (currentCharacter == null)
+        {
+            return;
+        }
+        using var client = GetClient(apiKey);
+
+        // Prepare request body
+        string json = JsonSerializer.Serialize(data);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await client.PutAsync($"{BaseUrl}/backend/api/character/{currentCharacter.ID}/bis_lists/{data.ID}/", content);
+        Service.PluginLog.Info(await response.Content.ReadAsStringAsync());
+        response.EnsureSuccessStatusCode();
+        Service.GearImportManager.FinishedSaving();
+    }
 }
