@@ -9,13 +9,13 @@ namespace SavageAimPlugin;
 
 public class SavageAimClient
 {
-    private static readonly string BaseUrl = "http://192.168.178.19:8080";
+    private static readonly string BaseUrl = "https://savageaim.com";
 
     private static HttpClient GetClient(string apiKey)
     {
         var client = new HttpClient();
         // TODO - Replace with a proper API Key impl when it exists
-        client.DefaultRequestHeaders.Add("Authorization", $"Token {apiKey}");
+        client.DefaultRequestHeaders.Add("Cookie", $"sessionid=xx4gvk8g4blsp27hblfjlcq6cx51bklm");
         return client;
     }
 

@@ -1,8 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
-using ECommons.ExcelServices;
-using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using Lumina.Excel.GeneratedSheets;
 
 namespace SavageAimPlugin.Data;
 
@@ -36,7 +35,7 @@ public class InGameCharacterData
     public string World { get; init; }
     
     [JsonIgnore]
-    public Job Job { get; init; }
+    public string Job { get; init; }
     
     [JsonPropertyName("mainhand")]
     public InGameGear Mainhand { get; init; }
@@ -76,9 +75,9 @@ public class InGameCharacterData
 
     public unsafe InGameCharacterData()
     {
-        Name = Player.Name;
-        World = Player.HomeWorld;
-        Job = Player.Job;
+        Name = Service.ClientState.LocalPlayer?.Name.ToString() ?? "";
+        World = Service.ClientState.LocalPlayer?.HomeWorld.GameData?.Name.ToString() ?? "";
+        Job = Service.ClientState.LocalPlayer?.ClassJob.GameData?.Abbreviation.ToString() ?? "";
         Mainhand = GetGearName(GearSlots.MAINHAND);
         Head = GetGearName(GearSlots.HEAD);
         Body = GetGearName(GearSlots.BODY);
@@ -91,7 +90,7 @@ public class InGameCharacterData
         RightRing = GetGearName(GearSlots.RIGHT_RING);
         LeftRing = GetGearName(GearSlots.LEFT_RING);
 
-        if (this.Job == Job.PLD)
+        if (this.Job == "PLD")
         {
             Offhand = GetGearName(GearSlots.OFFHAND);
         }
@@ -105,9 +104,10 @@ public class InGameCharacterData
     {
         var manager = InventoryManager.Instance();
         var item = manager->GetInventorySlot(InventoryType.EquippedItems, (int)slot);
-        var i = ExcelItemHelper.Get(item->ItemID);
-        // var itemLevel = i.LevelItem.Value.RowId;
-        return new InGameGear(i.GetName(), i.LevelItem.Value.RowId);
+        var id = item->ItemID;
+        var data = Service.DataManager.GetExcelSheet<Item>().GetRow(id);
+        if (data == null) return new InGameGear($"#{id}", id);
+        return new InGameGear(data.Name, data.LevelItem.Value.RowId);
     }
 
     public override string ToString()
@@ -116,7 +116,7 @@ public class InGameCharacterData
         builder.AppendLine($"{Name}@{World}");
         builder.AppendLine($"{Job}");
         builder.AppendLine($"Mainhand: {Mainhand}");
-        if (this.Job == Job.PLD) builder.AppendLine($"Offhand: {Offhand}");
+        if (this.Job == "PLD") builder.AppendLine($"Offhand: {Offhand}");
         builder.AppendLine($"Head: {Head}");
         builder.AppendLine($"Body: {Body}");
         builder.AppendLine($"Hands: {Hands}");

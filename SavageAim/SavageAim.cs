@@ -3,7 +3,6 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
-using ECommons;
 using SavageAim.Windows;
 using SavageAimPlugin;
 using SavageAimPlugin.Manager;
@@ -53,9 +52,6 @@ public sealed class SavageAim : IDalamudPlugin
         // to toggle the display status of the main ui of the plugin
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
 
-        // Add ECommons
-        ECommonsMain.Init(pluginInterface, this);
-
         // Add a Handler to the Logout to reset the data
         Service.ClientState.Logout += ResetData;
     }
@@ -67,7 +63,6 @@ public sealed class SavageAim : IDalamudPlugin
         MainWindow.Dispose();
 
         CommandManager.RemoveHandler(CommandName);
-        ECommonsMain.Dispose();
 
         // Remove Event Handlers
         Service.ClientState.Logout -= ResetData;

@@ -14,5 +14,6 @@ internal class Service
     internal static GearImportManager GearImportManager { get; set; } = null!;
 
     [PluginService] internal static IClientState ClientState { get; private set; } = null!;
+    [PluginService] internal static IDataManager DataManager { get; private set; } = null!;
     [PluginService] internal static IPluginLog PluginLog { get; private set; } = null!;
 }
