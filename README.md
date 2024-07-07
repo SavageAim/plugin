@@ -1,6 +1,12 @@
 # Current Gear Reporter Plugin
 A simple but effective Dalamud plugin that allows you to easily update BIS Lists on https://savageaim.com with your current gear reported from inside the game itself.
 
+## Installation
+1. Install [Penumbra](https://github.com/xivdev/Penumbra) and set it up
+2. Add the following url to `/xlsettings` > Experimental > Custom Plugin Repositories
+    - `https://raw.githubusercontent.com/SavageAim/plugin/master/release/repo.json`
+3. `SavageAim` should now show up in the list of plugins to install.
+
 ## Usage
 1. Visit https://savageaim.com/settings and generate an API Key.
 2. Install the plugin in game, and type `/sa` to open the window.
