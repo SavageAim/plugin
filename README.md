@@ -2,8 +2,8 @@
 A simple but effective Dalamud plugin that allows you to easily update BIS Lists on https://savageaim.com with your current gear reported from inside the game itself.
 
 ## Installation
-1. Install [Penumbra](https://github.com/xivdev/Penumbra) and set it up
-2. Add the following url to `/xlsettings` > Experimental > Custom Plugin Repositories
+1. Type `/xlsettings`, then go to the Experimental tab, and scroll down to Custom Plugin Repositories
+2. Add the following URL, click the + and then the Save button.
     - `https://raw.githubusercontent.com/SavageAim/plugin/master/release/repo.json`
 3. `SavageAim` should now show up in the list of plugins to install.
 
