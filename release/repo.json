@@ -18,6 +18,6 @@
   "Punchline": "Report your current gear in game to SavageAim.com",
   "AcceptsFeedback": true,
   "DownloadLinkInstall": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip",
-	"DownloadLinkTesting": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip",
-	"DownloadLinkUpdate": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip"
+  "DownloadLinkTesting": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip",
+  "DownloadLinkUpdate": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip"
 }
