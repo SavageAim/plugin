@@ -1,4 +1,5 @@
 using Dalamud.IoC;
+using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using SavageAim;
 using SavageAimPlugin.Manager;

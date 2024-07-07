@@ -107,17 +107,17 @@ public class BISListModify
         this.BisRightRing = bisData.BisRightRing.ID;
         this.BisLeftRing = bisData.BisLeftRing.ID;
 
-        this.CurrentMainhand = currentData.Mainhand.ID;
-        this.CurrentOffhand = currentData.Offhand.ID;
-        this.CurrentHead = currentData.Head.ID;
-        this.CurrentBody = currentData.Body.ID;
-        this.CurrentHands = currentData.Hands.ID;
-        this.CurrentLegs = currentData.Legs.ID;
-        this.CurrentFeet = currentData.Feet.ID;
-        this.CurrentEarrings = currentData.Earrings.ID;
-        this.CurrentNecklace = currentData.Necklace.ID;
-        this.CurrentBracelet = currentData.Bracelet.ID;
-        this.CurrentRightRing = currentData.RightRing.ID;
-        this.CurrentLeftRing = currentData.LeftRing.ID;
+        this.CurrentMainhand = currentData.Mainhand?.ID ?? bisData.CurrentMainhand.ID;
+        this.CurrentOffhand = currentData.Offhand?.ID ?? bisData.CurrentOffhand.ID;
+        this.CurrentHead = currentData.Head?.ID ?? bisData.CurrentHead.ID;
+        this.CurrentBody = currentData.Body?.ID ?? bisData.CurrentBody.ID;
+        this.CurrentHands = currentData.Hands?.ID ?? bisData.CurrentHands.ID;
+        this.CurrentLegs = currentData.Legs?.ID ?? bisData.CurrentLegs.ID;
+        this.CurrentFeet = currentData.Feet?.ID ?? bisData.CurrentFeet.ID;
+        this.CurrentEarrings = currentData.Earrings?.ID ?? bisData.CurrentEarrings.ID;
+        this.CurrentNecklace = currentData.Necklace?.ID ?? bisData.CurrentNecklace.ID;
+        this.CurrentBracelet = currentData.Bracelet?.ID ?? bisData.CurrentBracelet.ID;
+        this.CurrentRightRing = currentData.RightRing?.ID ?? bisData.CurrentRightRing.ID;
+        this.CurrentLeftRing = currentData.LeftRing?.ID ?? bisData.CurrentLeftRing.ID;
     }
 }

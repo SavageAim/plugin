@@ -104,7 +104,7 @@ public class InGameCharacterData
     {
         var manager = InventoryManager.Instance();
         var item = manager->GetInventorySlot(InventoryType.EquippedItems, (int)slot);
-        var id = item->ItemID;
+        var id = item->ItemId;
         var data = Service.DataManager.GetExcelSheet<Item>().GetRow(id);
         if (data == null) return new InGameGear($"#{id}", id);
         return new InGameGear(data.Name, data.LevelItem.Value.RowId);

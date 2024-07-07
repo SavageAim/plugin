@@ -15,7 +15,7 @@ public class SavageAimClient
     {
         var client = new HttpClient();
         // TODO - Replace with a proper API Key impl when it exists
-        client.DefaultRequestHeaders.Add("Cookie", $"sessionid=xx4gvk8g4blsp27hblfjlcq6cx51bklm");
+        client.DefaultRequestHeaders.Add("Authorization", $"Token {apiKey}");
         return client;
     }
 
@@ -54,6 +54,7 @@ public class SavageAimClient
 
         var response = await client.PostAsync($"{BaseUrl}/backend/api/import/plugin/", content);
         response.EnsureSuccessStatusCode();
+        Service.PluginLog.Info(await response.Content.ReadAsStringAsync());
         var importResponse = await JsonSerializer.DeserializeAsync<ImportResponse> (response.Content.ReadAsStream());
         Service.GearImportManager.SetData(importResponse);
     }
@@ -88,7 +89,6 @@ public class SavageAimClient
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         var response = await client.PutAsync($"{BaseUrl}/backend/api/character/{currentCharacter.ID}/bis_lists/{data.ID}/", content);
-        Service.PluginLog.Info(await response.Content.ReadAsStringAsync());
         response.EnsureSuccessStatusCode();
         Service.GearImportManager.FinishedSaving();
     }

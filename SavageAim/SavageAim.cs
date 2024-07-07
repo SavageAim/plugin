@@ -11,25 +11,19 @@ namespace SavageAim;
 
 public sealed class SavageAim : IDalamudPlugin
 {
-    private const string CommandName = "/sa";
+    [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
+    [PluginService] internal static ICommandManager CommandManager { get; private set; } = null!;
 
-    private DalamudPluginInterface PluginInterface { get; init; }
-    private ICommandManager CommandManager { get; init; }
+    private const string CommandName = "/sa";
     public readonly WindowSystem WindowSystem = new("SavageAimPlugin");
     private SavageAimWindow MainWindow { get; init; }
     public GearUpdateWindow UpdateWindow { get; init; }
 
-    public SavageAim(
-        [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
-        [RequiredVersion("1.0")] ICommandManager commandManager)
+    public SavageAim()
     {
-        PluginInterface = pluginInterface;
-        CommandManager = commandManager;
-
-        pluginInterface.Create<Service>();
+        PluginInterface.Create<Service>();
 
         Service.Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-        Service.Configuration.Initialize(PluginInterface);
 
         Service.APIKeyManager = new APIKeyManager();
         Service.BISListDataManager = new BISListDataManager();
