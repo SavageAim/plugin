@@ -1,23 +1,25 @@
-[{
-  "Author": "eri.yuki",
-  "Name": "Savage Aim",
-  "InternalName": "SavageAimPlugin",
-  "AssemblyVersion": "1.0.0.0",
-  "Description": "Report your current gear in game to SavageAim.com. /sa to use.",
-  "ApplicableVersion": "any",
-  "Tags": [
-    "savageaim.com",
-    "bis",
-    "gear"
-  ],
-  "DalamudApiLevel": 10,
-  "LoadRequiredState": 0,
-  "LoadSync": false,
-  "CanUnloadAsync": false,
-  "LoadPriority": 0,
-  "Punchline": "Report your current gear in game to SavageAim.com",
-  "AcceptsFeedback": true,
-  "DownloadLinkInstall": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip",
-  "DownloadLinkTesting": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip",
-  "DownloadLinkUpdate": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip"
-}]
+[
+    {
+        "Author": "eri.yuki",
+        "Name": "Savage Aim",
+        "InternalName": "SavageAimPlugin",
+        "AssemblyVersion": "1.0.0.0",
+        "Description": "Report your current gear in game to SavageAim.com. /sa to use.",
+        "ApplicableVersion": "any",
+        "Tags": [
+            "savageaim.com",
+            "bis",
+            "gear"
+        ],
+        "DalamudApiLevel": 10,
+        "LoadRequiredState": 0,
+        "LoadSync": false,
+        "CanUnloadAsync": false,
+        "LoadPriority": 0,
+        "Punchline": "Report your current gear in game to SavageAim.com",
+        "AcceptsFeedback": true,
+        "DownloadLinkInstall": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip",
+        "DownloadLinkTesting": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip",
+        "DownloadLinkUpdate": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip"
+    }
+]
