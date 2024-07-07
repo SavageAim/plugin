@@ -1,4 +1,4 @@
-{
+[{
   "Author": "eri.yuki",
   "Name": "Savage Aim",
   "InternalName": "SavageAimPlugin",
@@ -20,4 +20,4 @@
   "DownloadLinkInstall": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip",
   "DownloadLinkTesting": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip",
   "DownloadLinkUpdate": "https://github.com/SavageAim/plugin/raw/master/release/latest.zip"
-}
+}]
