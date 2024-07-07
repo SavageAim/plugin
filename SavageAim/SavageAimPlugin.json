@@ -1,5 +1,5 @@
 {
-    "Author": "freyamade",
+    "Author": "eri.yuki",
     "Name": "Savage Aim",
     "Punchline": "Report your current gear in game to SavageAim.com",
     "Description": "Report your current gear in game to SavageAim.com. /sa to use.",
@@ -9,5 +9,6 @@
         "bis",
         "gear"
     ],
-    "IconUrl": "https://savageaim.com/materia.png"
+    "RepoUrl": "https://github.com/SavageAim/plugin",
+    "IconUrl": "https://github.com/SavageAim/plugin/raw/master/images/icon.png"
 }

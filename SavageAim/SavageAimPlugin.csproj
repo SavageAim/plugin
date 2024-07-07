@@ -3,8 +3,8 @@
     <Import Project="Dalamud.Plugin.Bootstrap.targets" />
     
     <PropertyGroup>
-        <Version>0.0.0.1</Version>
-        <Description>Savage Aim Plugin.</Description>
+        <Version>1.0</Version>
+        <Description>Savage Aim - Current Gear Reporter Plugin</Description>
         <PackageProjectUrl>https://github.com/SavageAim/plugin</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
         <IsPackable>false</IsPackable>
