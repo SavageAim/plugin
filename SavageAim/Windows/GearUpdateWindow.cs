@@ -239,6 +239,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.Spacing();
         ImGui.Text("If you are happy with these changes, click the Save button below, and the BIS List will be updated on the site!");
         ImGui.Text("If not, close this window, make any changes you need and click the Save Current Data button when ready!");
+        ImGui.Text("Please note, gear not at level cap is not tracked in the system!");
         if (ImGui.Button("Save These Changes"))
         {
             Service.GearImportManager.SaveBis(Service.Configuration.apiKey, this.toUpdate, Service.GearImportManager.Data);
