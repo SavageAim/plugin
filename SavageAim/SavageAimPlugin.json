@@ -10,5 +10,6 @@
         "gear"
     ],
     "RepoUrl": "https://github.com/SavageAim/plugin",
+    "Changelog":  "# 2024.10.22.0\n- Fixed an issue where saving BIS Lists using the plugin would clear their associated URLs.",
     "IconUrl": "https://github.com/SavageAim/plugin/raw/master/images/icon.png"
 }

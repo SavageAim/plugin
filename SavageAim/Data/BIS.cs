@@ -36,7 +36,7 @@ public record class BISList (
     [property: JsonPropertyName("current_right_ring")] Gear CurrentRightRing,
 
     [property: JsonPropertyName("display_name")] string DisplayName,
-    [property: JsonPropertyName("external_url")] string URL,
+    [property: JsonPropertyName("external_link")] string URL,
     [property: JsonPropertyName("id")] uint ID,
     [property: JsonPropertyName("item_level")] uint ItemLevel,
     [property: JsonPropertyName("job")] SAJob Job,
