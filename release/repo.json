@@ -1,4 +1,4 @@
-{
+[{
   "Author": "eri.yuki",
   "Name": "Savage Aim",
   "InternalName": "SavageAimPlugin",
@@ -20,4 +20,4 @@
   "Punchline": "Report your current gear in game to SavageAim.com",
   "Changelog": "# 2024.10.22.0\n- Fixed an issue where saving BIS Lists using the plugin would clear their associated URLs.",
   "AcceptsFeedback": true
-}
+}]
