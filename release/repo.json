@@ -20,5 +20,7 @@
   "Punchline": "Report your current gear in game to SavageAim.com",
   "Changelog": "# 2024.10.22.0\n- Fixed an issue where saving BIS Lists using the plugin would clear their associated URLs.",
   "DownloadLinkInstall": "https://raw.githubusercontent.com/SavageAim/plugin/refs/heads/master/release/latest.zip",
+  "DownloadLinkTesting": "https://raw.githubusercontent.com/SavageAim/plugin/refs/heads/master/release/latest.zip",
+  "DownloadLinkUpdate": "https://raw.githubusercontent.com/SavageAim/plugin/refs/heads/master/release/latest.zip",
   "AcceptsFeedback": true
 }]
