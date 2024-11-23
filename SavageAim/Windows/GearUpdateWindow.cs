@@ -56,7 +56,7 @@ public class GearUpdateWindow : Window, IDisposable
         ImGui.TableNextColumn();
         ImGui.TableHeader("Mainhand");
         ImGui.TableNextColumn();
-        ImGui.Text(this.toUpdate.CurrentMainhand.Name);
+        ImGui.Text(this.toUpdate!.CurrentMainhand.Name);
         ImGui.TableNextColumn();
         var newName = Service.GearImportManager.Data!.Mainhand?.Name ?? this.toUpdate.CurrentMainhand.Name;
         if (this.toUpdate.CurrentMainhand.Name != newName) ImGui.Text("=>");

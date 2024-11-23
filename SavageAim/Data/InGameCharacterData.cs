@@ -1,7 +1,8 @@
+using System;
 using System.Text;
 using System.Text.Json.Serialization;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace SavageAimPlugin.Data;
 
@@ -76,8 +77,8 @@ public class InGameCharacterData
     public unsafe InGameCharacterData()
     {
         Name = Service.ClientState.LocalPlayer?.Name.ToString() ?? "";
-        World = Service.ClientState.LocalPlayer?.HomeWorld.GameData?.Name.ToString() ?? "";
-        Job = Service.ClientState.LocalPlayer?.ClassJob.GameData?.Abbreviation.ToString() ?? "";
+        World = Service.ClientState.LocalPlayer?.HomeWorld.Value.Name.ToString() ?? "";
+        Job = Service.ClientState.LocalPlayer?.ClassJob.Value.Abbreviation.ToString() ?? "";
         Mainhand = GetGearName(GearSlots.MAINHAND);
         Head = GetGearName(GearSlots.HEAD);
         Body = GetGearName(GearSlots.BODY);
@@ -105,9 +106,14 @@ public class InGameCharacterData
         var manager = InventoryManager.Instance();
         var item = manager->GetInventorySlot(InventoryType.EquippedItems, (int)slot);
         var id = item->ItemId;
-        var data = Service.DataManager.GetExcelSheet<Item>().GetRow(id);
-        if (data == null) return new InGameGear($"#{id}", id);
-        return new InGameGear(data.Name, data.LevelItem.Value.RowId);
+        try {
+            var data = Service.DataManager.GetExcelSheet<Item>().GetRow(id);
+            return new InGameGear(data.Name.ToString(), data.LevelItem.Value.RowId);
+        }
+        catch (Exception e) {
+            Service.PluginLog.Error($"error fetching item row #{id}: #{e}");
+            return new InGameGear($"#{id}", id);
+        }
     }
 
     public override string ToString()

@@ -68,7 +68,7 @@ public sealed class SavageAim : IDalamudPlugin
         ToggleMainUI();
     }
 
-    private void ResetData()
+    private void ResetData(int type, int code)
     {
         Service.BISListDataManager.Reset();
     }
