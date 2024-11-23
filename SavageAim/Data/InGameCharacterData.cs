@@ -106,11 +106,13 @@ public class InGameCharacterData
         var manager = InventoryManager.Instance();
         var item = manager->GetInventorySlot(InventoryType.EquippedItems, (int)slot);
         var id = item->ItemId;
-        try {
+        try 
+        {
             var data = Service.DataManager.GetExcelSheet<Item>().GetRow(id);
             return new InGameGear(data.Name.ToString(), data.LevelItem.Value.RowId);
         }
-        catch (Exception e) {
+        catch (Exception e) 
+        {
             Service.PluginLog.Error($"error fetching item row #{id}: #{e}");
             return new InGameGear($"#{id}", id);
         }

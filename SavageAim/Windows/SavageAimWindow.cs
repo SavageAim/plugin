@@ -9,6 +9,7 @@ using Dalamud.Utility;
 using ImGuiNET;
 using SavageAimPlugin;
 using SavageAimPlugin.Data;
+using static System.Net.WebRequestMethods;
 
 namespace SavageAim.Windows;
 
@@ -150,6 +151,18 @@ public class SavageAimWindow : Window, IDisposable
                             ImGui.SameLine();
                             ImGui.Text("Saved!");
                         }
+                    }
+                }
+                if (ImGui.Button("Open on savageaim.com"))
+                {
+                    Util.OpenLink($"https://savageaim.com/characters/{currentSAChar.ID}/bis_list/{bis.ID}");
+                }
+                if (bis.URL != null)
+                {
+                    ImGui.SameLine();
+                    var domain = bis.URL.Replace("http://", "").Replace("https://", "").Split("/")[0];
+                    if (ImGui.Button($"Open on {domain}")) {
+                        Util.OpenLink(bis.URL);
                     }
                 }
                 ImGui.EndTabItem();
