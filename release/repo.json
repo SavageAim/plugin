@@ -2,7 +2,7 @@
   "Author": "eri.yuki",
   "Name": "Savage Aim",
   "InternalName": "SavageAimPlugin",
-  "AssemblyVersion": "2024.10.22.0",
+  "AssemblyVersion": "2024.11.23.0",
   "Description": "Report your current gear in game to SavageAim.com. /sa to use.",
   "ApplicableVersion": "any",
   "RepoUrl": "https://github.com/SavageAim/plugin",
@@ -11,16 +11,14 @@
     "bis",
     "gear"
   ],
-  "DalamudApiLevel": 10,
+  "DalamudApiLevel": 11,
   "LoadRequiredState": 0,
   "LoadSync": false,
   "CanUnloadAsync": false,
   "LoadPriority": 0,
   "IconUrl": "https://github.com/SavageAim/plugin/raw/master/images/icon.png",
   "Punchline": "Report your current gear in game to SavageAim.com",
-  "Changelog": "# 2024.10.22.0\n- Fixed an issue where saving BIS Lists using the plugin would clear their associated URLs.",
-  "DownloadLinkInstall": "https://raw.githubusercontent.com/SavageAim/plugin/refs/heads/master/release/latest.zip",
-  "DownloadLinkTesting": "https://raw.githubusercontent.com/SavageAim/plugin/refs/heads/master/release/latest.zip",
-  "DownloadLinkUpdate": "https://raw.githubusercontent.com/SavageAim/plugin/refs/heads/master/release/latest.zip",
+  "Changelog": "# 2024.11.23.0\n- Updated plugin to work again! :D\n- Added buttons to BIS pages to open SavageAim and potentially external website link.",
   "AcceptsFeedback": true
-}]
+}
+]
