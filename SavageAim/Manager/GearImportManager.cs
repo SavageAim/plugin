@@ -20,9 +20,10 @@ public class GearImportManager
 
         this.IsDataReady = false;
         this.IsDataLoading = true;
+        var currentCharacter = Service.CharacterDataManager.InGameCharacter;
         Task.Run(async () =>
         {
-            await SavageAimClient.ImportCurrentGear(apiKey).ConfigureAwait(false);
+            await SavageAimClient.ImportCurrentGear(apiKey, currentCharacter).ConfigureAwait(false);
         }).ContinueWith(task =>
         {
             if (!this.IsDataReady) this.HasFailed = true;
@@ -44,11 +45,12 @@ public class GearImportManager
         this.IsSaving = true;
         this.HasSaved = false;
         this.HasFailedSaving = false;
+        var currentCharacter = Service.CharacterDataManager.GetCurrentCharacterInSA();
         Task.Run(async () =>
         {
             // Create an Instance of a BISListModify, taking the current BIS data along with the imported current data
             var data = new BISListModify(bis, currentGear);
-            await SavageAimClient.UpdateBis(apiKey, data).ConfigureAwait(false);
+            await SavageAimClient.UpdateBis(apiKey, data, currentCharacter).ConfigureAwait(false);
         }).ContinueWith(task =>
         {
             if (!this.HasSaved) this.HasFailedSaving = true;

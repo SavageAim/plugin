@@ -74,7 +74,7 @@ public class InGameCharacterData
     [JsonPropertyName("left_ring")]
     public InGameGear LeftRing { get; init; }
 
-    public unsafe InGameCharacterData()
+    public InGameCharacterData()
     {
         Name = Service.ClientState.LocalPlayer?.Name.ToString() ?? "";
         World = Service.ClientState.LocalPlayer?.HomeWorld.Value.Name.ToString() ?? "";

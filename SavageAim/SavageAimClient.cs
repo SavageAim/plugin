@@ -37,9 +37,8 @@ public class SavageAimClient
         Service.CharacterDataManager.SetData(charList ?? new());
     }
 
-    public static async Task ImportCurrentGear(string apiKey)
+    public static async Task ImportCurrentGear(string apiKey, InGameCharacterData? currentCharacter)
     {
-        var currentCharacter = Service.CharacterDataManager.InGameCharacter;
         if (currentCharacter == null)
         {
             Service.GearImportManager.SetData(null);
@@ -53,8 +52,8 @@ public class SavageAimClient
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync($"{BaseUrl}/backend/api/import/plugin/", content);
-        response.EnsureSuccessStatusCode();
         Service.PluginLog.Info(await response.Content.ReadAsStringAsync());
+        response.EnsureSuccessStatusCode();
         var importResponse = await JsonSerializer.DeserializeAsync<ImportResponse> (response.Content.ReadAsStream());
         Service.GearImportManager.SetData(importResponse);
     }
@@ -75,9 +74,8 @@ public class SavageAimClient
         Service.APIKeyManager.SetKeyIsValid(userData != null && userData.ID != null);
     }
 
-    public static async Task UpdateBis(string apiKey, BISListModify data)
+    public static async Task UpdateBis(string apiKey, BISListModify data, SACharacter? currentCharacter)
     {
-        var currentCharacter = Service.CharacterDataManager.GetCurrentCharacterInSA();
         if (currentCharacter == null)
         {
             return;

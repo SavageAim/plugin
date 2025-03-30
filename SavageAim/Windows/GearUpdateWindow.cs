@@ -233,8 +233,6 @@ public class GearUpdateWindow : Window, IDisposable
             ImGui.Text("Failed to import data. Close this window and try again!");
             return;
         }
-        //Service.PluginLog.Info(this.toUpdate.ToString());
-        //Service.PluginLog.Info(Service.GearImportManager.Data.ToString());
         this.DrawUpdateTable();
         ImGui.Spacing();
         ImGui.Text("If you are happy with these changes, click the Save button below, and the BIS List will be updated on the site!");
