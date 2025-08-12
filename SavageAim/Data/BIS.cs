@@ -1,4 +1,3 @@
-using ImGuiNET;
 using System.Text.Json.Serialization;
 
 namespace SavageAimPlugin.Data;

@@ -1,15 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text.Json;
 using Dalamud.Interface.Windowing;
-using Dalamud.Logging;
 using Dalamud.Utility;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using SavageAimPlugin;
 using SavageAimPlugin.Data;
-using static System.Net.WebRequestMethods;
 
 namespace SavageAim.Windows;
 
